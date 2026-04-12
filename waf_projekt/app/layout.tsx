@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
+import WavesBackground from "./components/WavesBackground";
+import { cn } from "@/lib/utils";
 
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,10 +31,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      className={cn("antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
     >
       <body>
-        <div className="app-container">
+        <WavesBackground />
+        <div className="app-container" style={{ position: 'relative', zIndex: 1 }}>
           <Navbar />
           <main className="main-content">{children}</main>
         </div>
