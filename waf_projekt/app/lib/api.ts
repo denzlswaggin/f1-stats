@@ -136,3 +136,36 @@ export function findMatchingMeeting(
       m.circuit_short_name.toLowerCase().includes(race.Circuit.Location.locality.toLowerCase())
   );
 }
+
+export async function getDriverSeasonResults(driverId: string) {
+  const data = await fetchJson<any>(
+    `${JOLPICA_BASE}/current/drivers/${driverId}/results.json`
+  );
+
+  return data.MRData.RaceTable.Races;
+}
+
+export async function getDriverCareerStats(driverId: string) {
+  const urls = [
+    `${JOLPICA_BASE}/drivers/${driverId}/results.json?limit=1`,
+    `${JOLPICA_BASE}/drivers/${driverId}/results/1.json?limit=1`,
+    `${JOLPICA_BASE}/drivers/${driverId}/results/2.json?limit=1`,
+    `${JOLPICA_BASE}/drivers/${driverId}/results/3.json?limit=1`,
+    `${JOLPICA_BASE}/drivers/${driverId}/qualifying/1.json?limit=1`
+  ];
+
+  const responses = await Promise.all(urls.map(url => fetch(url).then(res => res.json())));
+
+  const totalRaces = responses[0].MRData.total;
+  const wins = parseInt(responses[1].MRData.total);
+  const p2 = parseInt(responses[2].MRData.total);
+  const p3 = parseInt(responses[3].MRData.total);
+  const poles = responses[4].MRData.total;
+
+  return {
+    races: totalRaces,
+    wins: wins.toString(),
+    podiums: (wins + p2 + p3).toString(),
+    poles: poles
+  };
+}

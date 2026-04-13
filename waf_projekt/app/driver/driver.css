@@ -248,11 +248,12 @@
   gap: 12px;
 }
 
-.gp-flag-placeholder {
-  width: 48px;
-  height: 20px;
-  background: var(--border-color);
+.gp-flag {
+  width: 24px;
+  height: 16px;
+  object-fit: cover;
   border-radius: 2px;
+  border: 1px solid var(--border-color);
 }
 
 .compare-btn {

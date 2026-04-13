@@ -13,7 +13,7 @@ export default function WavesBackground() {
         height: "100vh",
         zIndex: 0,
         pointerEvents: "none",
-        filter: "blur(2px)",
+        filter: "blur(4px)",
       }}
     >
       <Waves
