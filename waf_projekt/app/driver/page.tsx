@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import DriverProfileClient from "./DriverProfileClient";
 import { getDriverStandings } from "../lib/api";
+import './driver.css';
 
 export const metadata: Metadata = {
   title: "Driver Profile – F1 Stats Hub",
