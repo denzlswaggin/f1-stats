@@ -1,0 +1,125 @@
+/* Driver Profile Styles */
+
+/* Driver selector */
+.driver-selector {
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.driver-select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 2px solid var(--f1-red);
+  border-radius: var(--radius-md);
+  padding: 14px 48px 14px 20px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.driver-select:hover,
+.driver-select:focus {
+  outline: none;
+  border-color: var(--f1-red);
+  box-shadow: 0 0 0 3px var(--f1-red-glow);
+}
+
+.driver-select option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.driver-select-chevron {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--f1-red);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.driver-hero {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  background: #B0B0B0;
+  border-radius: 0;
+  padding: 32px;
+  margin-bottom: 32px;
+  width: 100%;
+}
+
+.driver-hero-photo {
+  width: 120px;
+  height: 120px;
+  background: #E0E0E0;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-align: center;
+  padding: 10px;
+}
+
+.driver-hero-photo-placeholder {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 14px;
+  font-weight: 500;
+  color: #888;
+  line-height: 1.4;
+}
+
+.driver-hero-info {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.driver-hero-number {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 56px;
+  font-weight: 400;
+  color: #111;
+  line-height: 1;
+}
+
+.driver-hero-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.driver-hero-name {
+  display: flex;
+  gap: 8px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 20px;
+  font-weight: 700;
+  color: #111;
+}
+
+.driver-hero-team {
+  display: flex;
+  align-items: center;
+}
+
+.driver-hero-team-badge {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 14px;
+  color: #333;
+  background: transparent;
+  padding: 0;
+  border: none;
+  font-weight: 500;
+}
