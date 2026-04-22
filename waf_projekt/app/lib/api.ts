@@ -156,9 +156,9 @@ export function findMatchingMeeting(
   );
 }
 
-export async function getDriverSeasonResults(driverId: string) {
+export async function getDriverSeasonResults(driverId: string, season: string | number = "current") {
   const data = await fetchJson<any>(
-    `${JOLPICA_BASE}/current/drivers/${driverId}/results.json`
+    `${JOLPICA_BASE}/${season}/drivers/${driverId}/results.json`
   );
 
   return data.MRData.RaceTable.Races;

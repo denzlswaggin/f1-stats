@@ -236,26 +236,40 @@
   margin-right: -50vw;
 }
 
+/* ─── Driver Photo ─── */
 .driver-hero-photo {
-  width: 140px;
-  height: 140px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 0;
+  width: 160px;
+  height: 160px;
+  background: linear-gradient(135deg, var(--bg-card) 0%, #2a2a2a 100%);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  text-align: center;
-  padding: 10px;
+  overflow: hidden;
+  position: relative;
 }
 
-.driver-hero-photo-placeholder {
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 14px;
-  font-weight: 500;
+.driver-hero-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.3s ease;
+}
+
+.driver-hero-photo:hover .driver-hero-photo-img {
+  transform: scale(1.05);
+}
+
+.driver-hero-photo-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--text-muted);
-  line-height: 1.4;
+  width: 100%;
+  height: 100%;
 }
 
 .driver-hero-info {
@@ -351,7 +365,7 @@
   color: var(--text-muted);
 }
 
-/* ─── Section Bar ─── */
+/* ─── Section Bar with Season Selector ─── */
 .section-bar {
   font-family: var(--font-geist-mono), monospace;
   font-size: 14px;
@@ -364,6 +378,101 @@
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-bar-text {
+  flex: 1;
+}
+
+/* ─── Season Selector ─── */
+.season-selector {
+  position: relative;
+}
+
+.season-selector-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-secondary);
+  color: var(--f1-red);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.03em;
+}
+
+.season-selector-btn:hover {
+  border-color: var(--f1-red);
+  box-shadow: 0 0 0 2px var(--f1-red-glow);
+}
+
+.season-chevron {
+  transition: transform 0.25s ease;
+}
+
+.season-chevron.open {
+  transform: rotate(180deg);
+}
+
+.season-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 120px;
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 60;
+  animation: searchDropIn 0.15s ease-out;
+}
+
+.season-dropdown::-webkit-scrollbar {
+  width: 5px;
+}
+
+.season-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.season-dropdown::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+.season-dropdown-item {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.12s ease;
+}
+
+.season-dropdown-item:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.season-dropdown-item.active {
+  background: var(--f1-red);
+  color: white;
 }
 
 /* ─── Results Table ─── */
@@ -428,6 +537,60 @@
   border: 1px solid var(--border-color);
 }
 
+/* ─── Position Badges ─── */
+.pos-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pos-win {
+  background: rgba(255, 215, 0, 0.15);
+  color: #ffd700;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.pos-podium {
+  background: rgba(192, 192, 192, 0.12);
+  color: #c0c0c0;
+  border: 1px solid rgba(192, 192, 192, 0.25);
+}
+
+.pos-dnf {
+  background: rgba(225, 6, 0, 0.12);
+  color: var(--f1-red);
+  border: 1px solid rgba(225, 6, 0, 0.25);
+}
+
+/* ─── Loading Spinner ─── */
+.results-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+}
+
+.results-loading-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--f1-red);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* ─── Compare Button ─── */
 .compare-btn {
   display: inline-flex;
@@ -449,5 +612,55 @@
 }
 
 .compare-btn:hover {
-  background: #C0C0C0;
+  background: var(--f1-red);
+  color: white;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .driver-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 24px 16px;
+  }
+
+  .driver-hero-photo {
+    width: 120px;
+    height: 120px;
+  }
+
+  .driver-hero-info {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .driver-hero-number {
+    font-size: 44px;
+  }
+
+  .driver-hero-name {
+    font-size: 16px;
+  }
+
+  .driver-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .driver-stat-value {
+    font-size: 24px;
+  }
+
+  .section-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .results-table-flat th,
+  .results-table-flat td {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
 }

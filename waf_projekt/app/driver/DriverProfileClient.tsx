@@ -12,6 +12,41 @@ const countryToCode: Record<string, string> = {
   "Qatar": "qa", "Mexico": "mx", "Brazil": "br", "UAE": "ae"
 };
 
+// Driver photo URLs — using official F1 media CDN headshots
+const driverPhotos: Record<string, string> = {
+  max_verstappen: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/M/MAXVER01_Max_Verstappen/maxver01.png.transform/1col/image.png",
+  lewis_hamilton: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LEWHAM01_Lewis_Hamilton/lewham01.png.transform/1col/image.png",
+  charles_leclerc: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/C/CHALEC01_Charles_Leclerc/chalec01.png.transform/1col/image.png",
+  lando_norris: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LANNOR01_Lando_Norris/lannor01.png.transform/1col/image.png",
+  oscar_piastri: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/O/OSCPIA01_Oscar_Piastri/oscpia01.png.transform/1col/image.png",
+  carlos_sainz: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/C/CARSAI01_Carlos_Sainz/carsai01.png.transform/1col/image.png",
+  george_russell: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/G/GEORUS01_George_Russell/georus01.png.transform/1col/image.png",
+  fernando_alonso: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/F/FERALO01_Fernando_Alonso/feralo01.png.transform/1col/image.png",
+  pierre_gasly: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/P/PIEGAS01_Pierre_Gasly/piegas01.png.transform/1col/image.png",
+  alexander_albon: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/A/ALEALB01_Alexander_Albon/alealb01.png.transform/1col/image.png",
+  yuki_tsunoda: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/Y/YUKTSU01_Yuki_Tsunoda/yuktsu01.png.transform/1col/image.png",
+  lance_stroll: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LANSTR01_Lance_Stroll/lanstr01.png.transform/1col/image.png",
+  nico_hulkenberg: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/N/NICHUL01_Nico_Hulkenberg/nichul01.png.transform/1col/image.png",
+  kevin_magnussen: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/K/KEVMAG01_Kevin_Magnussen/kevmag01.png.transform/1col/image.png",
+  esteban_ocon: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/E/ESTOCO01_Esteban_Ocon/estoco01.png.transform/1col/image.png",
+  valtteri_bottas: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/V/VALBOT01_Valtteri_Bottas/valbot01.png.transform/1col/image.png",
+  guanyu_zhou: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/G/GUAZHO01_Guanyu_Zhou/guazho01.png.transform/1col/image.png",
+  daniel_ricciardo: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/D/DANRIC01_Daniel_Ricciardo/danric01.png.transform/1col/image.png",
+  oliver_bearman: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/O/OLIBEA01_Oliver_Bearman/olibea01.png.transform/1col/image.png",
+  jack_doohan: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/J/JACDOO01_Jack_Doohan/jacdoo01.png.transform/1col/image.png",
+  isack_hadjar: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/I/ISAHAD01_Isack_Hadjar/isahad01.png.transform/1col/image.png",
+  gabriel_bortoleto: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/G/GABBOR01_Gabriel_Bortoleto/gabbor01.png.transform/1col/image.png",
+  andrea_kimi_antonelli: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/A/ANDANT01_Andrea_Kimi_Antonelli/andant01.png.transform/1col/image.png",
+  liam_lawson: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LIALAW01_Liam_Lawson/lialaw01.png.transform/1col/image.png",
+};
+
+// Fallback image
+const FALLBACK_PHOTO = "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/driver_fallback_image.png.transform/1col/image.png";
+
+function getDriverPhoto(driverId: string): string {
+  return driverPhotos[driverId] || FALLBACK_PHOTO;
+}
+
 interface DriverInfo {
   driverId: string;
   code: string;
@@ -35,6 +70,10 @@ interface RaceResult {
   flagUrl: string;
 }
 
+// Generate season options (current year down to 2000)
+const CURRENT_YEAR = new Date().getFullYear();
+const SEASON_OPTIONS = Array.from({ length: CURRENT_YEAR - 1999 }, (_, i) => CURRENT_YEAR - i);
+
 export default function DriverProfileClient({ drivers }: Props) {
   // Search state
   const [query, setQuery] = useState("");
@@ -53,6 +92,14 @@ export default function DriverProfileClient({ drivers }: Props) {
     podiums: "--",
     poles: "--"
   });
+
+  // Season selector state
+  const [selectedSeason, setSelectedSeason] = useState<number>(CURRENT_YEAR);
+  const [isSeasonOpen, setIsSeasonOpen] = useState(false);
+  const seasonRef = useRef<HTMLDivElement>(null);
+
+  // Photo loading state
+  const [photoError, setPhotoError] = useState(false);
 
   const driver = selectedId
     ? drivers.find((d) => d.driverId === selectedId) ?? null
@@ -78,6 +125,9 @@ export default function DriverProfileClient({ drivers }: Props) {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
         setIsOpen(false);
       }
+      if (seasonRef.current && !seasonRef.current.contains(e.target as Node)) {
+        setIsSeasonOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -91,6 +141,7 @@ export default function DriverProfileClient({ drivers }: Props) {
   // Select a driver
   const selectDriver = useCallback((driverId: string) => {
     setSelectedId(driverId);
+    setPhotoError(false);
     const d = drivers.find((dr) => dr.driverId === driverId);
     if (d) {
       setQuery(`${d.givenName} ${d.familyName}`);
@@ -136,7 +187,7 @@ export default function DriverProfileClient({ drivers }: Props) {
     }
   };
 
-  // Fetch driver data
+  // Fetch driver data — responds to both selectedId AND selectedSeason
   useEffect(() => {
     if (!selectedId) return;
 
@@ -148,7 +199,7 @@ export default function DriverProfileClient({ drivers }: Props) {
         // Fetch career stats and season results in parallel
         const [statsData, races] = await Promise.all([
           getDriverCareerStats(selectedId!),
-          getDriverSeasonResults(selectedId!)
+          getDriverSeasonResults(selectedId!, selectedSeason)
         ]);
 
         if (cancelled) return;
@@ -172,6 +223,7 @@ export default function DriverProfileClient({ drivers }: Props) {
       } catch (error) {
         if (!cancelled) {
           console.error("Chyba při načítání dat o jezdci:", error);
+          setResults([]);
         }
       } finally {
         if (!cancelled) {
@@ -182,7 +234,7 @@ export default function DriverProfileClient({ drivers }: Props) {
 
     fetchData();
     return () => { cancelled = true; };
-  }, [selectedId]);
+  }, [selectedId, selectedSeason]);
 
   // Highlight matching text
   const highlightMatch = (text: string) => {
@@ -295,19 +347,31 @@ export default function DriverProfileClient({ drivers }: Props) {
           <h2 className="driver-empty-title">Select a Driver</h2>
           <p className="driver-empty-text">
             Use the search bar above to find a driver and view their profile, career stats
-            and 2026 season results.
+            and season results.
           </p>
         </div>
       )}
 
       {driver && (
         <>
-          {/* Driver hero card */}
+          {/* Driver hero card — matching wireframe layout */}
           <div className="driver-hero" id="driver-hero">
             <div className="driver-hero-photo">
-              <span className="driver-hero-photo-placeholder">
-                Photo<br />Placeholder
-              </span>
+              {!photoError ? (
+                <img
+                  src={getDriverPhoto(driver.driverId)}
+                  alt={`${driver.givenName} ${driver.familyName}`}
+                  className="driver-hero-photo-img"
+                  onError={() => setPhotoError(true)}
+                />
+              ) : (
+                <div className="driver-hero-photo-fallback">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </div>
+              )}
             </div>
 
             <div className="driver-hero-info">
@@ -325,6 +389,7 @@ export default function DriverProfileClient({ drivers }: Props) {
             </div>
           </div>
 
+          {/* Career stats grid */}
           <div className="driver-stats-grid">
             <div className="driver-stat-card">
               <span className="driver-stat-value">{stats.races}</span>
@@ -344,8 +409,50 @@ export default function DriverProfileClient({ drivers }: Props) {
             </div>
           </div>
 
-          <div className="section-bar">
-            Results – 2026 season
+          {/* Season results section with season selector */}
+          <div className="section-bar" id="results-section">
+            <span className="section-bar-text">Results – {selectedSeason} season</span>
+            <div className="season-selector" ref={seasonRef}>
+              <button
+                className="season-selector-btn"
+                onClick={() => setIsSeasonOpen(!isSeasonOpen)}
+                aria-label="Select season"
+                type="button"
+              >
+                {selectedSeason}
+                <svg
+                  className={`season-chevron${isSeasonOpen ? " open" : ""}`}
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              {isSeasonOpen && (
+                <ul className="season-dropdown" role="listbox">
+                  {SEASON_OPTIONS.map((year) => (
+                    <li
+                      key={year}
+                      role="option"
+                      aria-selected={selectedSeason === year}
+                      className={`season-dropdown-item${selectedSeason === year ? " active" : ""}`}
+                      onClick={() => {
+                        setSelectedSeason(year);
+                        setIsSeasonOpen(false);
+                      }}
+                    >
+                      {year}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
 
           <div className="results-table-wrapper">
@@ -362,13 +469,16 @@ export default function DriverProfileClient({ drivers }: Props) {
                 {isLoading ? (
                   <tr>
                     <td colSpan={4} style={{ textAlign: "center", padding: "32px", color: "var(--text-muted)" }}>
-                      Loading data...
+                      <div className="results-loading">
+                        <div className="results-loading-spinner" />
+                        Loading {selectedSeason} results...
+                      </div>
                     </td>
                   </tr>
                 ) : results.length === 0 ? (
                   <tr>
                     <td colSpan={4} style={{ textAlign: "center", padding: "32px", color: "var(--text-muted)" }}>
-                      No results found for this season yet.
+                      No results found for {selectedSeason} season.
                     </td>
                   </tr>
                 ) : (
@@ -386,7 +496,11 @@ export default function DriverProfileClient({ drivers }: Props) {
                           <span>{race.gp}</span>
                         </div>
                       </td>
-                      <td>{race.pos}</td>
+                      <td>
+                        <span className={`pos-badge${race.pos === "1" ? " pos-win" : race.pos === "2" || race.pos === "3" ? " pos-podium" : race.pos === "R" ? " pos-dnf" : ""}`}>
+                          {race.pos}
+                        </span>
+                      </td>
                       <td>{race.pts}</td>
                     </tr>
                   ))
