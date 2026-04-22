@@ -1,0 +1,409 @@
+/* ─── Season Header Bar ─── */
+.schedule-header-bar {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 14px 20px;
+  background: var(--bg-card);
+  border-left: 4px solid var(--f1-red);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.schedule-header-text {
+  flex: 1;
+}
+
+/* ─── Season Selector (reuse driver pattern) ─── */
+.schedule-season-selector {
+  position: relative;
+}
+
+.schedule-season-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-secondary);
+  color: var(--f1-red);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.03em;
+}
+
+.schedule-season-btn:hover {
+  border-color: var(--f1-red);
+  box-shadow: 0 0 0 2px var(--f1-red-glow);
+}
+
+.schedule-season-chevron {
+  transition: transform 0.25s ease;
+}
+
+.schedule-season-chevron.open {
+  transform: rotate(180deg);
+}
+
+.schedule-season-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 120px;
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 60;
+  animation: scheduleDropIn 0.15s ease-out;
+}
+
+@keyframes scheduleDropIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.schedule-season-dropdown::-webkit-scrollbar {
+  width: 5px;
+}
+
+.schedule-season-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.schedule-season-dropdown::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+.schedule-season-dropdown-item {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.12s ease;
+}
+
+.schedule-season-dropdown-item:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.schedule-season-dropdown-item.active {
+  background: var(--f1-red);
+  color: white;
+}
+
+/* ─── Race List ─── */
+.schedule-race-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ─── Race Row ─── */
+.schedule-race-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: default;
+}
+
+.schedule-race-row:hover {
+  transform: translateX(4px);
+  border-color: var(--text-muted);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.schedule-race-row.next-race {
+  border-color: var(--f1-red);
+  box-shadow: 0 0 0 1px var(--f1-red-glow), 0 4px 20px var(--f1-red-glow);
+}
+
+.schedule-race-row.next-race:hover {
+  box-shadow: 0 0 0 2px var(--f1-red-glow), 0 6px 24px var(--f1-red-glow);
+}
+
+/* ─── Round Number ─── */
+.schedule-round {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  height: 100%;
+  padding: 20px 0;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-muted);
+  background: var(--bg-table-row);
+  border-right: 1px solid var(--border-color);
+  align-self: stretch;
+}
+
+.schedule-race-row.next-race .schedule-round {
+  color: var(--f1-red);
+  text-shadow: 0 0 12px var(--f1-red-glow);
+}
+
+/* ─── Race Info (name, date, circuit) ─── */
+.schedule-race-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 20px;
+  min-width: 0;
+}
+
+.schedule-race-name {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.schedule-race-details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+.schedule-race-details .separator {
+  color: var(--border-color);
+  font-size: 10px;
+}
+
+.schedule-race-flag {
+  width: 20px;
+  height: 14px;
+  object-fit: cover;
+  border-radius: 2px;
+  border: 1px solid var(--border-color);
+}
+
+/* ─── Status Badge ─── */
+.schedule-status {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  flex-shrink: 0;
+}
+
+.schedule-status-badge {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 5px 14px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.schedule-status-badge.completed {
+  background: rgba(100, 100, 100, 0.2);
+  color: var(--text-muted);
+  border: 1px solid rgba(100, 100, 100, 0.3);
+}
+
+.schedule-status-badge.next-race {
+  background: rgba(225, 6, 0, 0.15);
+  color: var(--f1-red);
+  border: 1px solid rgba(225, 6, 0, 0.35);
+  animation: nextRacePulse 2s ease-in-out infinite;
+}
+
+@keyframes nextRacePulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+
+  50% {
+    box-shadow: 0 0 8px 2px var(--f1-red-glow);
+  }
+}
+
+.schedule-status-badge.upcoming {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.schedule-status-badge.cancelled {
+  background: rgba(225, 6, 0, 0.08);
+  color: #ff4444;
+  border: 1px solid rgba(225, 6, 0, 0.2);
+  text-decoration: line-through;
+}
+
+/* ─── Loading State ─── */
+.schedule-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+}
+
+.schedule-loading-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--f1-red);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.schedule-loading-text {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ─── Empty State ─── */
+.schedule-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  gap: 12px;
+}
+
+.schedule-empty-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.schedule-empty-title {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+}
+
+.schedule-empty-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 400px;
+}
+
+/* ─── Race Count Info ─── */
+.schedule-race-count {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+  padding: 16px 0 0;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .schedule-header-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .schedule-race-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .schedule-round {
+    min-width: 48px;
+    font-size: 18px;
+    padding: 16px 0;
+  }
+
+  .schedule-race-info {
+    padding: 12px 14px;
+  }
+
+  .schedule-race-name {
+    font-size: 12px;
+  }
+
+  .schedule-race-details {
+    font-size: 11px;
+  }
+
+  .schedule-status {
+    padding: 0 14px 12px;
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .schedule-status-badge {
+    font-size: 9px;
+    padding: 4px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .schedule-round {
+    min-width: 40px;
+    font-size: 16px;
+  }
+
+  .schedule-race-name {
+    font-size: 11px;
+  }
+}
