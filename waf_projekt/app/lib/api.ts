@@ -24,19 +24,38 @@ export class ApiError extends Error {
 }
 
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const res = await fetch(url, {
-    next: { revalidate: 300 }, // Cache for 5 minutes
-  });
+// Small delay to avoid API limiting
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-  if (!res.ok) {
-    throw new ApiError(
-      `API request failed: ${res.status} ${res.statusText}`,
-      res.status
-    );
+/**
+ * Fetch JSON with retry on 429 (rate limit).
+ * Retries up to 3 times with exponential backoff.
+ */
+async function fetchJson<T>(url: string, retries = 3): Promise<T> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const res = await fetch(url, {
+      next: { revalidate: 300 }, // Cache for 5 minutes
+    });
+
+    if (res.status === 429 && attempt < retries) {
+      await delay(600 * Math.pow(2, attempt));
+      continue;
+    }
+
+    if (!res.ok) {
+      throw new ApiError(
+        `API request failed: ${res.status} ${res.statusText}`,
+        res.status
+      );
+    }
+
+    return res.json() as Promise<T>;
   }
 
-  return res.json() as Promise<T>;
+  // This is unreachable, but TS needs the return type
+  throw new ApiError("Max retries exceeded", 429);
 }
 
 export async function getDriverStandings(
@@ -154,18 +173,39 @@ export async function getDriverCareerStats(driverId: string) {
     `${JOLPICA_BASE}/drivers/${driverId}/qualifying/1.json?limit=1`
   ];
 
-  const responses = await Promise.all(urls.map(url => fetch(url).then(res => res.json())));
+  try {
+    // Delay between requests to avoid 429 error
 
-  const totalRaces = responses[0].MRData.total;
-  const wins = parseInt(responses[1].MRData.total);
-  const p2 = parseInt(responses[2].MRData.total);
-  const p3 = parseInt(responses[3].MRData.total);
-  const poles = responses[4].MRData.total;
+    const r1 = await fetchJson<any>(urls[0]);
+    await delay(200);
+    const r2 = await fetchJson<any>(urls[1]);
+    await delay(200);
+    const r3 = await fetchJson<any>(urls[2]);
+    await delay(200);
+    const r4 = await fetchJson<any>(urls[3]);
+    await delay(200);
+    const r5 = await fetchJson<any>(urls[4]);
 
-  return {
-    races: totalRaces,
-    wins: wins.toString(),
-    podiums: (wins + p2 + p3).toString(),
-    poles: poles
-  };
+    const totalRaces = r1?.MRData?.total || "0";
+    const wins = parseInt(r2?.MRData?.total || "0");
+    const p2 = parseInt(r3?.MRData?.total || "0");
+    const p3 = parseInt(r4?.MRData?.total || "0");
+    const poles = r5?.MRData?.total || "0";
+
+    return {
+      races: totalRaces,
+      wins: wins.toString(),
+      podiums: (wins + p2 + p3).toString(),
+      poles: poles
+    };
+  } catch (error) {
+    console.error("Chyba při načítání kariérních statistik:", error);
+    // If API fails return --
+    return {
+      races: "--",
+      wins: "--",
+      podiums: "--",
+      poles: "--"
+    };
+  }
 }
