@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { getDriverSeasonResults, getDriverCareerStats } from "../lib/api";
 
 const countryToCode: Record<string, string> = {
@@ -36,7 +36,15 @@ interface RaceResult {
 }
 
 export default function DriverProfileClient({ drivers }: Props) {
-  const [selectedId, setSelectedId] = useState(drivers[0]?.driverId ?? "");
+  // Search state
+  const [query, setQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Driver data state
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [results, setResults] = useState<RaceResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [stats, setStats] = useState({
@@ -46,18 +54,106 @@ export default function DriverProfileClient({ drivers }: Props) {
     poles: "--"
   });
 
-  const driver = drivers.find((d) => d.driverId === selectedId) ?? drivers[0];
+  const driver = selectedId
+    ? drivers.find((d) => d.driverId === selectedId) ?? null
+    : null;
 
+  // Filter drivers based on query
+  const filteredDrivers = query.trim().length === 0
+    ? drivers
+    : drivers.filter((d) => {
+        const fullName = `${d.givenName} ${d.familyName}`.toLowerCase();
+        const q = query.toLowerCase();
+        return (
+          fullName.includes(q) ||
+          d.code.toLowerCase().includes(q) ||
+          d.team.toLowerCase().includes(q) ||
+          d.permanentNumber.includes(q)
+        );
+      });
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Reset highlight when filtered list changes
+  useEffect(() => {
+    setHighlightedIndex(-1);
+  }, [filteredDrivers.length]);
+
+  // Select a driver
+  const selectDriver = useCallback((driverId: string) => {
+    setSelectedId(driverId);
+    const d = drivers.find((dr) => dr.driverId === driverId);
+    if (d) {
+      setQuery(`${d.givenName} ${d.familyName}`);
+    }
+    setIsOpen(false);
+    setHighlightedIndex(-1);
+    inputRef.current?.blur();
+  }, [drivers]);
+
+  // Keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!isOpen) {
+      if (e.key === "ArrowDown" || e.key === "Enter") {
+        setIsOpen(true);
+        e.preventDefault();
+      }
+      return;
+    }
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setHighlightedIndex((prev) =>
+          prev < filteredDrivers.length - 1 ? prev + 1 : 0
+        );
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setHighlightedIndex((prev) =>
+          prev > 0 ? prev - 1 : filteredDrivers.length - 1
+        );
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (highlightedIndex >= 0 && filteredDrivers[highlightedIndex]) {
+          selectDriver(filteredDrivers[highlightedIndex].driverId);
+        }
+        break;
+      case "Escape":
+        setIsOpen(false);
+        setHighlightedIndex(-1);
+        break;
+    }
+  };
+
+  // Fetch driver data
   useEffect(() => {
     if (!selectedId) return;
+
+    let cancelled = false;
 
     async function fetchData() {
       setIsLoading(true);
       try {
-        const statsData = await getDriverCareerStats(selectedId);
-        setStats(statsData);
+        // Fetch career stats and season results in parallel
+        const [statsData, races] = await Promise.all([
+          getDriverCareerStats(selectedId!),
+          getDriverSeasonResults(selectedId!)
+        ]);
 
-        const races = await getDriverSeasonResults(selectedId);
+        if (cancelled) return;
+
+        setStats(statsData);
 
         const formattedResults = races.map((race: any) => {
           const country = race.Circuit.Location.country;
@@ -74,32 +170,135 @@ export default function DriverProfileClient({ drivers }: Props) {
 
         setResults(formattedResults);
       } catch (error) {
-        console.error("Chyba při načítání dat o jezdci:", error);
+        if (!cancelled) {
+          console.error("Chyba při načítání dat o jezdci:", error);
+        }
       } finally {
-        setIsLoading(false);
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       }
     }
 
     fetchData();
+    return () => { cancelled = true; };
   }, [selectedId]);
+
+  // Highlight matching text
+  const highlightMatch = (text: string) => {
+    if (!query.trim()) return text;
+    const idx = text.toLowerCase().indexOf(query.toLowerCase());
+    if (idx === -1) return text;
+    return (
+      <>
+        {text.slice(0, idx)}
+        <span className="search-highlight">{text.slice(idx, idx + query.length)}</span>
+        {text.slice(idx + query.length)}
+      </>
+    );
+  };
 
   return (
     <>
-      <div className="driver-selector" id="driver-selector">
-        <select
-          className="driver-select"
-          value={selectedId}
-          onChange={(e) => setSelectedId(e.target.value)}
-          aria-label="Select driver"
-        >
-          {drivers.map((d) => (
-            <option key={d.driverId} value={d.driverId}>
-              {d.givenName} {d.familyName} — {d.team}
-            </option>
-          ))}
-        </select>
-        <span className="driver-select-chevron">▼</span>
+      {/* Autocomplete search bar */}
+      <div className="driver-search-wrapper" id="driver-search" ref={searchRef}>
+        <div className="driver-search-input-wrapper">
+          <svg
+            className="driver-search-icon"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            ref={inputRef}
+            type="text"
+            className="driver-search-input"
+            placeholder="Search driver by name, code or team…"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setIsOpen(true);
+              // Clear selection when user starts typing something new
+              if (driver && e.target.value !== `${driver.givenName} ${driver.familyName}`) {
+                // keep selectedId so current profile stays visible
+              }
+            }}
+            onFocus={() => {
+              setIsOpen(true);
+              // Select all text on focus for easy re-search
+              inputRef.current?.select();
+            }}
+            onKeyDown={handleKeyDown}
+            aria-label="Search drivers"
+            aria-expanded={isOpen}
+            aria-autocomplete="list"
+            autoComplete="off"
+          />
+          {query && (
+            <button
+              className="driver-search-clear"
+              onClick={() => {
+                setQuery("");
+                setIsOpen(true);
+                inputRef.current?.focus();
+              }}
+              aria-label="Clear search"
+              type="button"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
+        {isOpen && (
+          <ul className="driver-search-results" role="listbox">
+            {filteredDrivers.length === 0 ? (
+              <li className="driver-search-empty">No drivers found</li>
+            ) : (
+              filteredDrivers.map((d, index) => (
+                <li
+                  key={d.driverId}
+                  role="option"
+                  aria-selected={highlightedIndex === index}
+                  className={`driver-search-item${
+                    highlightedIndex === index ? " highlighted" : ""
+                  }${d.driverId === selectedId ? " selected" : ""}`}
+                  onMouseEnter={() => setHighlightedIndex(index)}
+                  onClick={() => selectDriver(d.driverId)}
+                >
+                  <span className="driver-search-item-number">{d.permanentNumber}</span>
+                  <span className="driver-search-item-name">
+                    {highlightMatch(`${d.givenName} ${d.familyName}`)}
+                  </span>
+                  <span className="driver-search-item-team">
+                    {highlightMatch(d.team)}
+                  </span>
+                </li>
+              ))
+            )}
+          </ul>
+        )}
       </div>
+
+      {/* Prompt when no driver selected */}
+      {!driver && !isLoading && (
+        <div className="driver-empty-state">
+          <div className="driver-empty-icon">🏎️</div>
+          <h2 className="driver-empty-title">Select a Driver</h2>
+          <p className="driver-empty-text">
+            Use the search bar above to find a driver and view their profile, career stats
+            and 2026 season results.
+          </p>
+        </div>
+      )}
 
       {driver && (
         <>

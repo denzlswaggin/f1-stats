@@ -1,51 +1,223 @@
 /* Driver Profile Styles */
 
-/* Driver selector */
-.driver-selector {
+/* ─── Search Bar ─── */
+.driver-search-wrapper {
   position: relative;
   margin-bottom: 28px;
+  z-index: 50;
 }
 
-.driver-select {
+.driver-search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.driver-search-icon {
+  position: absolute;
+  left: 16px;
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.driver-search-input-wrapper:focus-within .driver-search-icon {
+  color: var(--f1-red);
+}
+
+.driver-search-input {
   width: 100%;
-  appearance: none;
-  -webkit-appearance: none;
   font-family: var(--font-geist-mono), monospace;
   font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px 44px 14px 44px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.driver-search-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.driver-search-input:hover {
+  border-color: var(--text-muted);
+}
+
+.driver-search-input:focus {
+  outline: none;
+  border-color: var(--f1-red);
+  box-shadow: 0 0 0 3px var(--f1-red-glow);
+  background: var(--bg-secondary);
+}
+
+.driver-search-clear {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s ease, background 0.15s ease;
+  line-height: 1;
+}
+
+.driver-search-clear:hover {
+  color: var(--f1-red);
+  background: var(--f1-red-glow);
+}
+
+/* ─── Search Results Dropdown ─── */
+.driver-search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  max-height: 340px;
+  overflow-y: auto;
+  animation: searchDropIn 0.15s ease-out;
+}
+
+@keyframes searchDropIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.driver-search-results::-webkit-scrollbar {
+  width: 6px;
+}
+
+.driver-search-results::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.driver-search-results::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+.driver-search-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.driver-search-item:hover,
+.driver-search-item.highlighted {
+  background: var(--bg-secondary);
+}
+
+.driver-search-item.selected {
+  border-left: 3px solid var(--f1-red);
+  padding-left: 11px;
+}
+
+.driver-search-item-number {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--f1-red);
+  min-width: 28px;
+  text-align: center;
+}
+
+.driver-search-item-name {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  flex: 1;
+}
+
+.driver-search-item-team {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.driver-search-empty {
+  padding: 20px 14px;
+  text-align: center;
+  color: var(--text-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+}
+
+.search-highlight {
+  color: var(--f1-red);
+  font-weight: 700;
+}
+
+/* ─── Empty State ─── */
+.driver-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  text-align: center;
+}
+
+.driver-empty-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+  animation: emptyBounce 2s ease-in-out infinite;
+}
+
+@keyframes emptyBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.driver-empty-title {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 22px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-primary);
-  background: var(--bg-card);
-  border: 2px solid var(--f1-red);
-  border-radius: var(--radius-md);
-  padding: 14px 48px 14px 20px;
-  cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  margin: 0 0 12px;
 }
 
-.driver-select:hover,
-.driver-select:focus {
-  outline: none;
-  border-color: var(--f1-red);
-  box-shadow: 0 0 0 3px var(--f1-red-glow);
+.driver-empty-text {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 400px;
+  line-height: 1.6;
+  margin: 0;
 }
 
-.driver-select option {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-}
-
-.driver-select-chevron {
-  position: absolute;
-  right: 18px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--f1-red);
-  font-size: 12px;
-  pointer-events: none;
-}
-
+/* ─── Driver Hero Card ─── */
 .driver-hero {
   display: flex;
   align-items: center;
@@ -137,7 +309,7 @@
   letter-spacing: 0.1em;
 }
 
-/* Driver stats and results */
+/* ─── Driver Stats Grid ─── */
 .driver-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -179,7 +351,7 @@
   color: var(--text-muted);
 }
 
-/* Section Bar */
+/* ─── Section Bar ─── */
 .section-bar {
   font-family: var(--font-geist-mono), monospace;
   font-size: 14px;
@@ -194,7 +366,7 @@
   margin-bottom: 24px;
 }
 
-/* Results Table */
+/* ─── Results Table ─── */
 .results-table-wrapper {
   width: 100%;
   margin-bottom: 32px;
@@ -256,6 +428,7 @@
   border: 1px solid var(--border-color);
 }
 
+/* ─── Compare Button ─── */
 .compare-btn {
   display: inline-flex;
   align-items: center;
