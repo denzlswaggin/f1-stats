@@ -71,6 +71,33 @@ export interface Race {
   SprintQualifying?: RaceSession;
 }
 
+export interface RaceResult {
+  number: string;
+  position: string;
+  positionText: string;
+  points: string;
+  Driver: Driver;
+  Constructor: Constructor;
+  grid: string;
+  laps: string;
+  status: string;
+  Time?: {
+    millis: string;
+    time: string;
+  };
+  FastestLap?: {
+    rank: string;
+    lap: string;
+    Time: {
+      time: string;
+    };
+  };
+}
+
+export interface RaceWithResults extends Race {
+  Results: RaceResult[];
+}
+
 // OpenF1 API Types
 
 export interface OpenF1Meeting {
@@ -128,6 +155,16 @@ export interface JolpicaRaceScheduleResponse {
     RaceTable: {
       season: string;
       Races: Race[];
+    };
+  };
+}
+
+export interface JolpicaRaceResultsResponse {
+  MRData: {
+    RaceTable: {
+      season: string;
+      round: string;
+      Races: RaceWithResults[];
     };
   };
 }

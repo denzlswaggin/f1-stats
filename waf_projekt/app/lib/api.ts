@@ -2,10 +2,12 @@ import type {
   DriverStanding,
   ConstructorStanding,
   Race,
+  RaceWithResults,
   OpenF1Meeting,
   JolpicaDriverStandingsResponse,
   JolpicaConstructorStandingsResponse,
   JolpicaRaceScheduleResponse,
+  JolpicaRaceResultsResponse,
 } from "./types";
 
 // API Base URLs
@@ -29,10 +31,6 @@ function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-/**
- * Fetch JSON with retry on 429 (rate limit).
- * Retries up to 3 times with exponential backoff.
- */
 async function fetchJson<T>(url: string, retries = 3): Promise<T> {
   for (let attempt = 0; attempt <= retries; attempt++) {
     const res = await fetch(url, {
@@ -88,6 +86,27 @@ export async function getConstructorStandings(
 export async function getSeasonSchedule(): Promise<Race[]> {
   const data = await fetchJson<JolpicaRaceScheduleResponse>(
     `${JOLPICA_BASE}/current.json`
+  );
+
+  return data.MRData.RaceTable.Races;
+}
+
+export async function getRaceResults(
+  season: string | number = "current",
+  round: string | number = "last"
+): Promise<RaceWithResults[]> {
+  const data = await fetchJson<JolpicaRaceResultsResponse>(
+    `${JOLPICA_BASE}/${season}/${round}/results.json`
+  );
+
+  return data.MRData.RaceTable.Races;
+}
+
+export async function getSeasonRounds(
+  season: string | number = "current"
+): Promise<Race[]> {
+  const data = await fetchJson<JolpicaRaceScheduleResponse>(
+    `${JOLPICA_BASE}/${season}.json`
   );
 
   return data.MRData.RaceTable.Races;
