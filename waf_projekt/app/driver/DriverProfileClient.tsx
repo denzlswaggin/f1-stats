@@ -109,15 +109,15 @@ export default function DriverProfileClient({ drivers }: Props) {
   const filteredDrivers = query.trim().length === 0
     ? drivers
     : drivers.filter((d) => {
-        const fullName = `${d.givenName} ${d.familyName}`.toLowerCase();
-        const q = query.toLowerCase();
-        return (
-          fullName.includes(q) ||
-          d.code.toLowerCase().includes(q) ||
-          d.team.toLowerCase().includes(q) ||
-          d.permanentNumber.includes(q)
-        );
-      });
+      const fullName = `${d.givenName} ${d.familyName}`.toLowerCase();
+      const q = query.toLowerCase();
+      return (
+        fullName.includes(q) ||
+        d.code.toLowerCase().includes(q) ||
+        d.team.toLowerCase().includes(q) ||
+        d.permanentNumber.includes(q)
+      );
+    });
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -320,9 +320,8 @@ export default function DriverProfileClient({ drivers }: Props) {
                   key={d.driverId}
                   role="option"
                   aria-selected={highlightedIndex === index}
-                  className={`driver-search-item${
-                    highlightedIndex === index ? " highlighted" : ""
-                  }${d.driverId === selectedId ? " selected" : ""}`}
+                  className={`driver-search-item${highlightedIndex === index ? " highlighted" : ""
+                    }${d.driverId === selectedId ? " selected" : ""}`}
                   onMouseEnter={() => setHighlightedIndex(index)}
                   onClick={() => selectDriver(d.driverId)}
                 >
@@ -343,12 +342,8 @@ export default function DriverProfileClient({ drivers }: Props) {
       {/* Prompt when no driver selected */}
       {!driver && !isLoading && (
         <div className="driver-empty-state">
-          <div className="driver-empty-icon">🏎️</div>
           <h2 className="driver-empty-title">Select a Driver</h2>
-          <p className="driver-empty-text">
-            Use the search bar above to find a driver and view their profile, career stats
-            and season results.
-          </p>
+
         </div>
       )}
 
