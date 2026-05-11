@@ -31,7 +31,6 @@ const teamColors: Record<string, { primary: string; dark: string; accent: string
   "alpine": { primary: "#ff87bc", dark: "#4a1f33", accent: "#0090ff" },
   "williams": { primary: "#64c4ff", dark: "#0a2d4a", accent: "#041e42" },
   "rb": { primary: "#6692ff", dark: "#1a2a5c", accent: "#ffffff" },
-  "kick_sauber": { primary: "#52e252", dark: "#0f3d0f", accent: "#000000" },
   "haas": { primary: "#b6babd", dark: "#2a2d2f", accent: "#e10600" },
 };
 
@@ -39,39 +38,46 @@ function getTeamColors(constructorId: string) {
   return teamColors[constructorId] || { primary: "#e10600", dark: "#3d0200", accent: "#ffffff" };
 }
 
-// Driver photo URLs — using official F1 media CDN headshots
 const driverPhotos: Record<string, string> = {
-  max_verstappen: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/M/MAXVER01_Max_Verstappen/maxver01.png.transform/1col/image.png",
-  lewis_hamilton: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LEWHAM01_Lewis_Hamilton/lewham01.png.transform/1col/image.png",
-  charles_leclerc: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/C/CHALEC01_Charles_Leclerc/chalec01.png.transform/1col/image.png",
-  lando_norris: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LANNOR01_Lando_Norris/lannor01.png.transform/1col/image.png",
-  oscar_piastri: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/O/OSCPIA01_Oscar_Piastri/oscpia01.png.transform/1col/image.png",
-  carlos_sainz: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/C/CARSAI01_Carlos_Sainz/carsai01.png.transform/1col/image.png",
-  george_russell: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/G/GEORUS01_George_Russell/georus01.png.transform/1col/image.png",
-  fernando_alonso: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/F/FERALO01_Fernando_Alonso/feralo01.png.transform/1col/image.png",
-  pierre_gasly: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/P/PIEGAS01_Pierre_Gasly/piegas01.png.transform/1col/image.png",
-  alexander_albon: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/A/ALEALB01_Alexander_Albon/alealb01.png.transform/1col/image.png",
-  yuki_tsunoda: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/Y/YUKTSU01_Yuki_Tsunoda/yuktsu01.png.transform/1col/image.png",
-  lance_stroll: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LANSTR01_Lance_Stroll/lanstr01.png.transform/1col/image.png",
-  nico_hulkenberg: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/N/NICHUL01_Nico_Hulkenberg/nichul01.png.transform/1col/image.png",
-  kevin_magnussen: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/K/KEVMAG01_Kevin_Magnussen/kevmag01.png.transform/1col/image.png",
-  esteban_ocon: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/E/ESTOCO01_Esteban_Ocon/estoco01.png.transform/1col/image.png",
-  valtteri_bottas: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/V/VALBOT01_Valtteri_Bottas/valbot01.png.transform/1col/image.png",
-  guanyu_zhou: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/G/GUAZHO01_Guanyu_Zhou/guazho01.png.transform/1col/image.png",
-  daniel_ricciardo: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/D/DANRIC01_Daniel_Ricciardo/danric01.png.transform/1col/image.png",
-  oliver_bearman: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/O/OLIBEA01_Oliver_Bearman/olibea01.png.transform/1col/image.png",
-  jack_doohan: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/J/JACDOO01_Jack_Doohan/jacdoo01.png.transform/1col/image.png",
-  isack_hadjar: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/I/ISAHAD01_Isack_Hadjar/isahad01.png.transform/1col/image.png",
-  gabriel_bortoleto: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/G/GABBOR01_Gabriel_Bortoleto/gabbor01.png.transform/1col/image.png",
-  andrea_kimi_antonelli: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/A/ANDANT01_Andrea_Kimi_Antonelli/andant01.png.transform/1col/image.png",
-  liam_lawson: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LIALAW01_Liam_Lawson/lialaw01.png.transform/1col/image.png",
+  // Red Bull
+  max_verstappen: "/drivers/max_verstappen.avif",
+  hadjar: "/drivers/isack_hadjar.avif",
+  // Ferrari
+  leclerc: "/drivers/charles_leclerc.avif",
+  hamilton: "/drivers/lewis_hamilton.avif",
+  // McLaren
+  norris: "/drivers/lando_norris.avif",
+  piastri: "/drivers/oscar_piastri.avif",
+  // Mercedes
+  russell: "/drivers/george_russel.avif",
+  antonelli: "/drivers/kimi_antonelli.avif",
+  // Aston Martin
+  alonso: "/drivers/fernando_alonso.avif",
+  stroll: "/drivers/lance_stroll.avif",
+  // Alpine
+  gasly: "/drivers/pierre_gasly.avif",
+  colapinto: "/drivers/franco_colapinto.avif",
+  doohan: "/drivers/franco_colapinto.avif",  // fallback — no photo for Doohan
+  // Williams
+  albon: "/drivers/alexander_albon.avif",
+  sainz: "/drivers/carlos_sainz.avif",
+  // Haas
+  ocon: "/drivers/esteban_ocon.avif",
+  bearman: "/drivers/oliver_bearman.avif",
+  // Sauber (Audi)
+  hulkenberg: "/drivers/nico_hulkenberg.avif",
+  bortoleto: "/drivers/gabriel_bortoleto.avif",
+  // Racing Bulls
+  lawson: "/drivers/liam_lawson.avif",
+  lindblad: "/drivers/arvid_lindblad.avif",  // fallback — using Lindblad photo
+  // Cadillac (if applicable)
+  perez: "/drivers/sergio_perez.avif",
+  bottas: "/drivers/vallteri_bottas.avif",
 };
 
-// Fallback image
-const FALLBACK_PHOTO = "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/driver_fallback_image.png.transform/1col/image.png";
 
 function getDriverPhoto(driverId: string): string {
-  return driverPhotos[driverId] || FALLBACK_PHOTO;
+  return driverPhotos[driverId];
 }
 
 interface DriverInfo {
@@ -434,7 +440,7 @@ export default function DriverProfileClient({ drivers }: Props) {
 
                 {/* Right: driver photo */}
                 <div className="driver-hero-photo">
-                  {!photoError ? (
+                  {!photoError && getDriverPhoto(driver.driverId) ? (
                     <img
                       src={getDriverPhoto(driver.driverId)}
                       alt={`${driver.givenName} ${driver.familyName}`}
