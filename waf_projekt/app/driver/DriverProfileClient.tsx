@@ -12,6 +12,33 @@ const countryToCode: Record<string, string> = {
   "Qatar": "qa", "Mexico": "mx", "Brazil": "br", "UAE": "ae"
 };
 
+// Nationality → country code for flag display
+const nationalityToCode: Record<string, string> = {
+  "Dutch": "nl", "British": "gb", "Monegasque": "mc", "Australian": "au",
+  "Spanish": "es", "Mexican": "mx", "Canadian": "ca", "German": "de",
+  "French": "fr", "Finnish": "fi", "Japanese": "jp", "Chinese": "cn",
+  "Thai": "th", "Danish": "dk", "American": "us", "Italian": "it",
+  "Brazilian": "br", "New Zealander": "nz", "Algerian": "dz",
+};
+
+// Team colors for hero card backgrounds
+const teamColors: Record<string, { primary: string; dark: string; accent: string }> = {
+  "red_bull": { primary: "#1e41ff", dark: "#0a1a5c", accent: "#ffcd00" },
+  "mclaren": { primary: "#ff8700", dark: "#4a2800", accent: "#47c7fc" },
+  "ferrari": { primary: "#e8002d", dark: "#5a0011", accent: "#fff200" },
+  "mercedes": { primary: "#27f4d2", dark: "#0a3d33", accent: "#00a19c" },
+  "aston_martin": { primary: "#229971", dark: "#0a3326", accent: "#cedc00" },
+  "alpine": { primary: "#ff87bc", dark: "#4a1f33", accent: "#0090ff" },
+  "williams": { primary: "#64c4ff", dark: "#0a2d4a", accent: "#041e42" },
+  "rb": { primary: "#6692ff", dark: "#1a2a5c", accent: "#ffffff" },
+  "kick_sauber": { primary: "#52e252", dark: "#0f3d0f", accent: "#000000" },
+  "haas": { primary: "#b6babd", dark: "#2a2d2f", accent: "#e10600" },
+};
+
+function getTeamColors(constructorId: string) {
+  return teamColors[constructorId] || { primary: "#e10600", dark: "#3d0200", accent: "#ffffff" };
+}
+
 // Driver photo URLs — using official F1 media CDN headshots
 const driverPhotos: Record<string, string> = {
   max_verstappen: "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/M/MAXVER01_Max_Verstappen/maxver01.png.transform/1col/image.png",
@@ -349,40 +376,83 @@ export default function DriverProfileClient({ drivers }: Props) {
 
       {driver && (
         <>
-          {/* Driver hero card — matching wireframe layout */}
-          <div className="driver-hero" id="driver-hero">
-            <div className="driver-hero-photo">
-              {!photoError ? (
-                <img
-                  src={getDriverPhoto(driver.driverId)}
-                  alt={`${driver.givenName} ${driver.familyName}`}
-                  className="driver-hero-photo-img"
-                  onError={() => setPhotoError(true)}
-                />
-              ) : (
-                <div className="driver-hero-photo-fallback">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                  </svg>
+          {/* Driver hero card — F1 store style */}
+          {(() => {
+            const colors = getTeamColors(driver.constructorId);
+            const flagCode = nationalityToCode[driver.nationality] || "un";
+            return (
+              <div
+                className="driver-hero"
+                id="driver-hero"
+                style={{
+                  "--team-primary": colors.primary,
+                  "--team-dark": colors.dark,
+                  "--team-accent": colors.accent,
+                } as React.CSSProperties}
+              >
+                {/* Large background number watermark */}
+                <div className="driver-hero-watermark" aria-hidden="true">
+                  {driver.permanentNumber}
                 </div>
-              )}
-            </div>
 
-            <div className="driver-hero-info">
-              <div className="driver-hero-number">{driver.permanentNumber}</div>
+                {/* Decorative stripes */}
+                <div className="driver-hero-stripes" aria-hidden="true">
+                  <div className="stripe" />
+                  <div className="stripe" />
+                </div>
 
-              <div className="driver-hero-details">
-                <h2 className="driver-hero-name">
-                  <span className="driver-hero-given">{driver.givenName}</span>
-                  <span className="driver-hero-family">{driver.familyName}</span>
-                </h2>
-                <div className="driver-hero-team">
-                  <span className="driver-hero-team-badge">{driver.team}</span>
+                {/* Left: driver info */}
+                <div className="driver-hero-content">
+                  <h2 className="driver-hero-name">
+                    <span className="driver-hero-given">{driver.givenName}</span>
+                    <span className="driver-hero-family">{driver.familyName}</span>
+                  </h2>
+
+                  <div className="driver-hero-meta">
+                    <span className="driver-hero-meta-item">
+                      <img
+                        src={`https://flagcdn.com/20x15/${flagCode}.png`}
+                        alt={driver.nationality}
+                        className="driver-hero-flag"
+                      />
+                      {driver.nationality}
+                    </span>
+                    <span className="driver-hero-meta-sep">|</span>
+                    <span className="driver-hero-meta-item">{driver.team}</span>
+                    <span className="driver-hero-meta-sep">|</span>
+                    <span className="driver-hero-meta-item">{driver.permanentNumber}</span>
+                  </div>
+
+                  <button className="driver-hero-cta" type="button">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    View profile
+                  </button>
+                </div>
+
+                {/* Right: driver photo */}
+                <div className="driver-hero-photo">
+                  {!photoError ? (
+                    <img
+                      src={getDriverPhoto(driver.driverId)}
+                      alt={`${driver.givenName} ${driver.familyName}`}
+                      className="driver-hero-photo-img"
+                      onError={() => setPhotoError(true)}
+                    />
+                  ) : (
+                    <div className="driver-hero-photo-fallback">
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          </div>
+            );
+          })()}
 
           {/* Career stats grid */}
           <div className="driver-stats-grid">

@@ -225,110 +225,207 @@
   margin: 0;
 }
 
-/* ─── Driver Hero Card ─── */
+/* ─── Driver Hero Card (F1 Store Style) ─── */
 .driver-hero {
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  background: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-color);
-  border-radius: 0;
-  padding: 32px;
-  margin-bottom: 32px;
-
-  width: 100vw;
   position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
+  display: flex;
+  align-items: stretch;
+  background: linear-gradient(135deg, var(--team-dark, #1a1a1a) 0%, var(--team-primary, #e10600) 60%, var(--team-primary, #e10600) 100%);
+  border-radius: var(--radius-lg);
+  margin-bottom: 32px;
+  overflow: hidden;
+  min-height: 260px;
+  width: 100%;
+  animation: heroFadeIn 0.4s ease-out;
 }
 
-/* ─── Driver Photo ─── */
-.driver-hero-photo {
-  width: 160px;
-  height: 160px;
-  background: linear-gradient(135deg, var(--bg-card) 0%, #2a2a2a 100%);
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-md);
+@keyframes heroFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Large background number watermark */
+.driver-hero-watermark {
+  position: absolute;
+  right: 15%;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: clamp(140px, 20vw, 240px);
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.12);
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.08);
+  text-shadow: 0 0 60px rgba(0, 0, 0, 0.3);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+
+/* Decorative stripes on the left */
+.driver-hero-stripes {
+  position: absolute;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  z-index: 2;
+}
+
+.driver-hero-stripes .stripe {
+  width: 5px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.driver-hero-stripes .stripe:first-child {
+  height: 70px;
+}
+
+.driver-hero-stripes .stripe:last-child {
+  height: 50px;
+  align-self: center;
+}
+
+/* Content area (left side) */
+.driver-hero-content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px 32px 40px 64px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Driver name */
+.driver-hero-name {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+}
+
+.driver-hero-given {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-style: italic;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+
+.driver-hero-family {
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-size: clamp(32px, 4.5vw, 52px);
+  font-weight: 900;
+  color: #ffffff;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+/* Meta info: flag, team, number */
+.driver-hero-meta {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  overflow: hidden;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.driver-hero-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.02em;
+}
+
+.driver-hero-flag {
+  width: 20px;
+  height: 15px;
+  object-fit: cover;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.driver-hero-meta-sep {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 13px;
+}
+
+/* CTA Button */
+.driver-hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: 999px;
+  padding: 10px 24px;
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: fit-content;
+  letter-spacing: 0.02em;
+}
+
+.driver-hero-cta:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #ffffff;
+}
+
+/* ─── Driver Photo (right side) ─── */
+.driver-hero-photo {
   position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 320px;
+  min-width: 220px;
+  flex-shrink: 0;
+  align-self: flex-end;
+  padding-right: 20px;
 }
 
 .driver-hero-photo-img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
+  max-height: 280px;
+  object-fit: contain;
+  object-position: bottom center;
   transition: transform 0.3s ease;
+  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.3));
 }
 
 .driver-hero-photo:hover .driver-hero-photo-img {
-  transform: scale(1.05);
+  transform: scale(1.03) translateY(-4px);
 }
 
 .driver-hero-photo-fallback {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.4);
   width: 100%;
-  height: 100%;
-}
-
-.driver-hero-info {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 24px;
-}
-
-.driver-hero-number {
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 64px;
-  font-weight: 700;
-  color: var(--f1-red);
-  line-height: 1;
-  text-shadow: 0 0 15px var(--f1-red-glow);
-}
-
-.driver-hero-details {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-top: 4px;
-}
-
-.driver-hero-name {
-  display: flex;
-  gap: 8px;
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text-primary);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
-
-.driver-hero-team {
-  display: flex;
-  align-items: center;
-}
-
-.driver-hero-team-badge {
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 14px;
-  color: var(--text-secondary);
-  background: transparent;
-  padding: 0;
-  border: none;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  height: 200px;
 }
 
 /* ─── Driver Stats Grid ─── */
@@ -630,27 +727,52 @@
 @media (max-width: 768px) {
   .driver-hero {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
-    padding: 24px 16px;
+    min-height: 200px;
+  }
+
+  .driver-hero-content {
+    padding: 28px 20px 20px 50px;
+  }
+
+  .driver-hero-stripes {
+    left: 14px;
+  }
+
+  .driver-hero-stripes .stripe {
+    width: 4px;
+  }
+
+  .driver-hero-stripes .stripe:first-child {
+    height: 50px;
+  }
+
+  .driver-hero-stripes .stripe:last-child {
+    height: 36px;
   }
 
   .driver-hero-photo {
-    width: 120px;
-    height: 120px;
+    width: 100%;
+    min-width: unset;
+    justify-content: flex-end;
+    padding-right: 16px;
+    padding-bottom: 0;
   }
 
-  .driver-hero-info {
-    flex-direction: column;
-    gap: 12px;
+  .driver-hero-photo-img {
+    max-height: 200px;
   }
 
-  .driver-hero-number {
-    font-size: 44px;
+  .driver-hero-watermark {
+    font-size: 100px;
+    right: 10%;
   }
 
-  .driver-hero-name {
-    font-size: 16px;
+  .driver-hero-given {
+    font-size: 20px;
+  }
+
+  .driver-hero-family {
+    font-size: 28px;
   }
 
   .driver-stats-grid {
