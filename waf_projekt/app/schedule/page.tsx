@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import ScheduleClient from "./ScheduleClient";
 import { getSeasonSchedule } from "../lib/api";
 import "./schedule.css";
+import WavesBackground from "../components/WavesBackground";
 
 export const metadata: Metadata = {
   title: "Schedule – F1 Stats Hub",
@@ -25,6 +26,7 @@ export default async function SchedulePage() {
 
   return (
     <>
+      <WavesBackground linecolor='#800000' />
       <div className="page-header" id="schedule-header">
         <h1>Schedule</h1>
       </div>

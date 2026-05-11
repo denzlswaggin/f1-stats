@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { getDriverSeasonResults, getDriverCareerStats } from "../lib/api";
+import WavesBackground from "../components/WavesBackground";
 
 const countryToCode: Record<string, string> = {
   "Bahrain": "bh", "Saudi Arabia": "sa", "Australia": "au",
@@ -77,6 +78,7 @@ const driverPhotos: Record<string, string> = {
 };
 
 
+
 function getDriverPhoto(driverId: string): string {
   return driverPhotos[driverId];
 }
@@ -138,6 +140,10 @@ export default function DriverProfileClient({ drivers }: Props) {
   const driver = selectedId
     ? drivers.find((d) => d.driverId === selectedId) ?? null
     : null;
+
+  const currentBgColor = driver
+    ? getTeamColors(driver.constructorId).primary
+    : "#800000";
 
   // Filter drivers based on query
   const filteredDrivers = query.trim().length === 0
@@ -286,6 +292,7 @@ export default function DriverProfileClient({ drivers }: Props) {
 
   return (
     <>
+      <WavesBackground linecolor={currentBgColor} />
       {/* Autocomplete search bar */}
       <div className="driver-search-wrapper" id="driver-search" ref={searchRef}>
         <div className="driver-search-input-wrapper">

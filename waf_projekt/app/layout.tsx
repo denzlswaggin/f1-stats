@@ -5,7 +5,7 @@ import Navbar from "./components/Navbar";
 import WavesBackground from "./components/WavesBackground";
 import { cn } from "@/lib/utils";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +34,6 @@ export default function RootLayout({
       className={cn("antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
     >
       <body>
-        <WavesBackground />
         <div className="app-container" style={{ position: 'relative', zIndex: 1 }}>
           <Navbar />
           <main className="main-content">{children}</main>

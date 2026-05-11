@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import WavesBackground from "../components/WavesBackground";
 
 export const metadata: Metadata = {
   title: "Compare Drivers – F1 Stats Hub",
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
 export default function ComparePage() {
   return (
     <>
+      <WavesBackground linecolor='#800000' />
       <div className="page-header" id="compare-header">
         <h1>Compare Drivers</h1>
       </div>

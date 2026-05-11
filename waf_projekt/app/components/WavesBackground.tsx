@@ -2,7 +2,11 @@
 
 import Waves from "@/components/Waves";
 
-export default function WavesBackground() {
+interface WavesBackgroundProps {
+  linecolor?: string;
+}
+
+export default function WavesBackground({ linecolor = "#800000" }: WavesBackgroundProps) {
   return (
     <div
       style={{
@@ -11,13 +15,13 @@ export default function WavesBackground() {
         left: 0,
         width: "100vw",
         height: "100vh",
-        zIndex: 0,
+        zIndex: -1,
         pointerEvents: "none",
         filter: "blur(4px)",
       }}
     >
       <Waves
-        lineColor="#800000"
+        lineColor={linecolor}
         backgroundColor="transparent"
         waveSpeedX={0.02}
         waveSpeedY={0.01}
