@@ -32,6 +32,8 @@ const teamColors: Record<string, { primary: string; dark: string; accent: string
   "williams": { primary: "#64c4ff", dark: "#0a2d4a", accent: "#041e42" },
   "rb": { primary: "#6692ff", dark: "#1a2a5c", accent: "#ffffff" },
   "haas": { primary: "#b6babd", dark: "#2a2d2f", accent: "#e10600" },
+  "audi": { primary: "#c40505ff", dark: "#4d0000ff", accent: "#e10600" },
+  "cadillac": { primary: "#4d4d4dff", dark: "#2a2d2f", accent: "#adadadff" }
 };
 
 function getTeamColors(constructorId: string) {
@@ -57,20 +59,19 @@ const driverPhotos: Record<string, string> = {
   // Alpine
   gasly: "/drivers/pierre_gasly.avif",
   colapinto: "/drivers/franco_colapinto.avif",
-  doohan: "/drivers/franco_colapinto.avif",  // fallback — no photo for Doohan
   // Williams
   albon: "/drivers/alexander_albon.avif",
   sainz: "/drivers/carlos_sainz.avif",
   // Haas
   ocon: "/drivers/esteban_ocon.avif",
   bearman: "/drivers/oliver_bearman.avif",
-  // Sauber (Audi)
+  // Audi
   hulkenberg: "/drivers/nico_hulkenberg.avif",
   bortoleto: "/drivers/gabriel_bortoleto.avif",
   // Racing Bulls
   lawson: "/drivers/liam_lawson.avif",
-  lindblad: "/drivers/arvid_lindblad.avif",  // fallback — using Lindblad photo
-  // Cadillac (if applicable)
+  lindblad: "/drivers/arvid_lindblad.avif",
+  // Cadillac 
   perez: "/drivers/sergio_perez.avif",
   bottas: "/drivers/vallteri_bottas.avif",
 };
@@ -375,7 +376,6 @@ export default function DriverProfileClient({ drivers }: Props) {
       {/* Prompt when no driver selected */}
       {!driver && !isLoading && (
         <div className="driver-empty-state">
-          <h2 className="driver-empty-title">Select a Driver</h2>
 
         </div>
       )}
@@ -428,14 +428,6 @@ export default function DriverProfileClient({ drivers }: Props) {
                     <span className="driver-hero-meta-sep">|</span>
                     <span className="driver-hero-meta-item">{driver.permanentNumber}</span>
                   </div>
-
-                  <button className="driver-hero-cta" type="button">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                      <circle cx="12" cy="7" r="4" />
-                    </svg>
-                    View profile
-                  </button>
                 </div>
 
                 {/* Right: driver photo */}

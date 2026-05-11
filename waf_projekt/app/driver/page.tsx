@@ -22,5 +22,6 @@ export default async function DriverPage() {
     constructorId: s.Constructors[0]?.constructorId ?? "",
   }));
 
+  /*console.log(drivers.map(d => `${d.givenName} ${d.familyName}: ${d.constructorId}`));*/
   return <DriverProfileClient drivers={drivers} />;
 }
