@@ -141,10 +141,6 @@ export default function DriverProfileClient({ drivers }: Props) {
     ? drivers.find((d) => d.driverId === selectedId) ?? null
     : null;
 
-  const currentBgColor = driver
-    ? getTeamColors(driver.constructorId).primary
-    : "#800000";
-
   // Filter drivers based on query
   const filteredDrivers = query.trim().length === 0
     ? drivers
@@ -290,9 +286,17 @@ export default function DriverProfileClient({ drivers }: Props) {
     );
   };
 
+  const currentBgColor = driver
+    ? getTeamColors(driver.constructorId).primary
+    : "#800000";
+
   return (
-    <>
+    <div
+      className="driver-profile-theme-wrapper"
+      style={{ "--theme-color": currentBgColor } as React.CSSProperties}
+    >
       <WavesBackground linecolor={currentBgColor} />
+
       {/* Autocomplete search bar */}
       <div className="driver-search-wrapper" id="driver-search" ref={searchRef}>
         <div className="driver-search-input-wrapper">
@@ -584,6 +588,6 @@ export default function DriverProfileClient({ drivers }: Props) {
           </button>
         </>
       )}
-    </>
+    </div>
   );
 }
