@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 // Country name → country code mapping for flags
 const countryToCode: Record<string, string> = {
@@ -67,6 +69,7 @@ function findNextRaceIndex(races: RaceData[]): number {
 }
 
 export default function ScheduleClient({ initialRaces, initialSeason }: Props) {
+  const router = useRouter();
   const [selectedSeason, setSelectedSeason] = useState<number>(parseInt(initialSeason));
   const [isSeasonOpen, setIsSeasonOpen] = useState(false);
   const [races, setRaces] = useState<RaceData[]>(initialRaces);
@@ -84,51 +87,19 @@ export default function ScheduleClient({ initialRaces, initialSeason }: Props) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Fetch new season data when season changes
+  // Sync local state when initialSeason changes (navigating between /schedule/[season] routes)
   useEffect(() => {
-    if (selectedSeason === parseInt(initialSeason)) {
-      setRaces(initialRaces);
-      return;
-    }
+    setSelectedSeason(parseInt(initialSeason));
+    setRaces(initialRaces);
+  }, [initialSeason, initialRaces]);
 
-    let cancelled = false;
-
-    async function fetchSeason() {
-      setIsLoading(true);
-      try {
-        const res = await fetch(
-          `https://api.jolpi.ca/ergast/f1/${selectedSeason}.json`
-        );
-        if (!res.ok) throw new Error("Failed to fetch");
-        const data = await res.json();
-        const fetchedRaces: RaceData[] = data.MRData.RaceTable.Races.map((race: any) => ({
-          round: race.round,
-          raceName: race.raceName,
-          date: race.date,
-          time: race.time || "14:00:00Z",
-          circuitName: race.Circuit.circuitName,
-          country: race.Circuit.Location.country,
-          locality: race.Circuit.Location.locality,
-        }));
-
-        if (!cancelled) {
-          setRaces(fetchedRaces);
-        }
-      } catch (error) {
-        console.error("Error fetching schedule:", error);
-        if (!cancelled) {
-          setRaces([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    fetchSeason();
-    return () => { cancelled = true; };
-  }, [selectedSeason, initialSeason, initialRaces]);
+  // When season changes via dropdown, navigate to the new season URL
+  function handleSeasonChange(year: number) {
+    setIsSeasonOpen(false);
+    if (year === selectedSeason) return;
+    setIsLoading(true);
+    router.push(`/schedule/${year}`);
+  }
 
   const nextRaceIndex = findNextRaceIndex(races);
 
@@ -169,10 +140,7 @@ export default function ScheduleClient({ initialRaces, initialSeason }: Props) {
                   role="option"
                   aria-selected={selectedSeason === year}
                   className={`schedule-season-dropdown-item${selectedSeason === year ? " active" : ""}`}
-                  onClick={() => {
-                    setSelectedSeason(year);
-                    setIsSeasonOpen(false);
-                  }}
+                  onClick={() => handleSeasonChange(year)}
                 >
                   {year}
                 </li>
@@ -207,13 +175,11 @@ export default function ScheduleClient({ initialRaces, initialSeason }: Props) {
               const countryCode = countryToCode[race.country] || "un";
               const flagUrl = `https://flagcdn.com/24x18/${countryCode}.png`;
               const roundPadded = race.round.padStart(2, "0");
+              const isCompleted = status === "completed";
+              const resultsHref = `/results/${selectedSeason}/${race.round}`;
 
-              return (
-                <div
-                  key={`${selectedSeason}-${race.round}`}
-                  className={`schedule-race-row${status === "next-race" ? " next-race" : ""}`}
-                  id={`schedule-race-${race.round}`}
-                >
+              const rowContent = (
+                <>
                   {/* Round number */}
                   <div className="schedule-round">{roundPadded}</div>
 
@@ -233,16 +199,41 @@ export default function ScheduleClient({ initialRaces, initialSeason }: Props) {
                     </div>
                   </div>
 
-                  {/* Status badge */}
+                  {/* Status badge / Results link */}
                   <div className="schedule-status">
-                    <span className={`schedule-status-badge ${status}`}>
-                      {status === "next-race"
-                        ? "Next Race"
-                        : status === "completed"
-                        ? "Completed"
-                        : "Upcoming"}
-                    </span>
+                    {isCompleted ? (
+                      <Link
+                        href={resultsHref}
+                        className="schedule-status-badge completed schedule-results-link"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Results →
+                      </Link>
+                    ) : (
+                      <span className={`schedule-status-badge ${status}`}>
+                        {status === "next-race" ? "Next Race" : "Upcoming"}
+                      </span>
+                    )}
                   </div>
+                </>
+              );
+
+              return isCompleted ? (
+                <Link
+                  key={`${selectedSeason}-${race.round}`}
+                  href={resultsHref}
+                  className="schedule-race-row schedule-race-row-link"
+                  id={`schedule-race-${race.round}`}
+                >
+                  {rowContent}
+                </Link>
+              ) : (
+                <div
+                  key={`${selectedSeason}-${race.round}`}
+                  className={`schedule-race-row${status === "next-race" ? " next-race" : ""}`}
+                  id={`schedule-race-${race.round}`}
+                >
+                  {rowContent}
                 </div>
               );
             })}

@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { getDriverSeasonResults, getDriverCareerStats } from "../lib/api";
 import WavesBackground from "../components/WavesBackground";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const countryToCode: Record<string, string> = {
   "Bahrain": "bh", "Saudi Arabia": "sa", "Australia": "au",
@@ -96,31 +98,45 @@ interface DriverInfo {
 
 interface Props {
   drivers: DriverInfo[];
+  initialDriverId?: string;
 }
+
 
 interface RaceResult {
   round: string;
+  season: string;
   gp: string;
   pos: string;
   pts: string;
   flagUrl: string;
 }
 
+
 // Generate season options (current year down to 2000)
 const CURRENT_YEAR = new Date().getFullYear();
 const SEASON_OPTIONS = Array.from({ length: CURRENT_YEAR - 1999 }, (_, i) => CURRENT_YEAR - i);
 
-export default function DriverProfileClient({ drivers }: Props) {
-  // Search state
-  const [query, setQuery] = useState("");
+export default function DriverProfileClient({ drivers, initialDriverId }: Props) {
+
+  const router = useRouter();
+
+  // Search state – initialize query from URL param if present
+  const [query, setQuery] = useState(() => {
+    if (initialDriverId) {
+      const d = drivers.find((dr) => dr.driverId === initialDriverId);
+      return d ? `${d.givenName} ${d.familyName}` : "";
+    }
+    return "";
+  });
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Driver data state
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(initialDriverId ?? null);
   const [results, setResults] = useState<RaceResult[]>([]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [stats, setStats] = useState({
     races: "--",
@@ -178,7 +194,7 @@ export default function DriverProfileClient({ drivers }: Props) {
     setHighlightedIndex(-1);
   }, [filteredDrivers.length]);
 
-  // Select a driver
+  // Select a driver – updates local state AND navigates to /driver/[driverId]
   const selectDriver = useCallback((driverId: string) => {
     setSelectedId(driverId);
     setPhotoError(false);
@@ -189,7 +205,11 @@ export default function DriverProfileClient({ drivers }: Props) {
     setIsOpen(false);
     setHighlightedIndex(-1);
     inputRef.current?.blur();
-  }, [drivers]);
+    // Update URL so the page is shareable and browser history works
+    router.push(`/driver/${driverId}`);
+  }, [drivers, router]);
+
+
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -252,12 +272,14 @@ export default function DriverProfileClient({ drivers }: Props) {
 
           return {
             round: race.round.padStart(2, "0"),
+            season: race.season,
             gp: race.raceName,
             pos: race.Results[0].positionText,
             pts: race.Results[0].points,
             flagUrl: `https://flagcdn.com/24x18/${countryCode}.png`
           };
         });
+
 
         setResults(formattedResults);
       } catch (error) {
@@ -553,18 +575,28 @@ export default function DriverProfileClient({ drivers }: Props) {
                   </tr>
                 ) : (
                   results.map((race, index) => (
-                    <tr key={index}>
+                    <tr
+                      key={index}
+                      className="driver-result-row-clickable"
+                      onClick={() => {}}
+                    >
                       <td>{race.round}</td>
                       <td>
-                        <div className="gp-cell">
-                          <img
-                            src={race.flagUrl}
-                            alt="Country flag"
-                            className="gp-flag"
-                            loading="lazy"
-                          />
-                          <span>{race.gp}</span>
-                        </div>
+                        <Link
+                          href={`/results/${race.season}/${parseInt(race.round)}`}
+                          className="driver-gp-link"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className="gp-cell">
+                            <img
+                              src={race.flagUrl}
+                              alt="Country flag"
+                              className="gp-flag"
+                              loading="lazy"
+                            />
+                            <span>{race.gp}</span>
+                          </div>
+                        </Link>
                       </td>
                       <td>
                         <span className={`pos-badge${race.pos === "1" ? " pos-win" : race.pos === "2" || race.pos === "3" ? " pos-podium" : race.pos === "R" ? " pos-dnf" : ""}`}>
@@ -575,13 +607,18 @@ export default function DriverProfileClient({ drivers }: Props) {
                     </tr>
                   ))
                 )}
+
               </tbody>
             </table>
           </div>
 
-          <button className="compare-btn">
+          <Link
+            href={`/compare?a=${driver.driverId}`}
+            className="compare-btn"
+          >
             Compare this driver <span>→</span>
-          </button>
+          </Link>
+
         </>
       )}
     </>

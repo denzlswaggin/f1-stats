@@ -633,6 +633,23 @@
   gap: 12px;
 }
 
+.driver-gp-link {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.15s ease;
+}
+
+.driver-gp-link:hover .gp-cell span {
+  color: var(--f1-red);
+}
+
+/* Clickable result rows */
+.driver-result-row-clickable {
+  cursor: default;
+  transition: background 0.12s ease;
+}
+
+
 .gp-flag {
   width: 24px;
   height: 16px;

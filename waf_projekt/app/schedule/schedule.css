@@ -138,12 +138,34 @@
   overflow: hidden;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   cursor: default;
+  text-decoration: none;
+  color: inherit;
 }
 
 .schedule-race-row:hover {
   transform: translateX(4px);
   border-color: var(--text-muted);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.schedule-race-row-link {
+  cursor: pointer;
+}
+
+.schedule-race-row-link:hover {
+  border-color: rgba(60, 255, 0, 0.4);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+}
+
+.schedule-results-link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.schedule-results-link:hover {
+  background: rgba(60, 255, 0, 0.5) !important;
+  box-shadow: 0 0 8px rgba(30, 175, 9, 0.4);
 }
 
 .schedule-race-row.next-race {
