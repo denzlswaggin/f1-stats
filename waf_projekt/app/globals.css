@@ -179,51 +179,86 @@ a {
   position: relative;
 }
 
+/* ── Trigger button ── */
+
 .navbar-logo {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-family: var(--font-geist-mono), monospace;
-  font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
   background: var(--f1-red);
   color: white;
-  padding: 6px 14px;
+  padding: 6px 12px 6px 10px;
   border-radius: var(--radius-sm);
   border: none;
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
-.navbar-logo:hover {
+.navbar-logo:hover,
+.navbar-logo.open {
   background: var(--f1-red-dark);
 }
 
+/* Logo icon placeholder */
+.navbar-logo-icon {
+  flex-shrink: 0;
+  opacity: 0.95;
+}
+
+/* Two-line text block */
+.navbar-logo-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  line-height: 1;
+}
+
+.navbar-logo-brand {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.navbar-logo-page {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: white;
+}
+
+/* Chevron */
 .navbar-chevron {
   transition: transform 0.25s ease;
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .navbar-chevron.open {
   transform: rotate(180deg);
 }
 
+/* ── Dropdown panel – same card style as season selectors ── */
+
 .navbar-dropdown {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 6px);
   left: 0;
-  min-width: 200px;
-  background: rgba(26, 26, 26, 0.95);
-  backdrop-filter: blur(12px);
+  min-width: 180px;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 6px 0;
+  padding: 6px;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-8px);
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  transform: translateY(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  z-index: 60;
 }
 
 .navbar-dropdown.open {
@@ -232,26 +267,41 @@ a {
   transform: translateY(0);
 }
 
+/* Items */
+
 .navbar-dropdown-item {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-secondary);
-  padding: 10px 18px;
-  transition: all 0.15s ease;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  transition: all 0.12s ease;
   text-decoration: none;
 }
 
 .navbar-dropdown-item:hover {
   color: var(--text-primary);
-  background: var(--bg-card-hover);
+  background: var(--bg-secondary);
 }
 
 .navbar-dropdown-item.active {
   color: white;
   background: var(--f1-red);
+}
+
+/* Active dot indicator */
+.navbar-dropdown-item-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  flex-shrink: 0;
 }
 
 .navbar-brand-text {
