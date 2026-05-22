@@ -22,7 +22,7 @@
 }
 
 .driver-search-input-wrapper:focus-within .driver-search-icon {
-  color: var(--f1-red);
+  color: var(--theme-color);
 }
 
 .driver-search-input {
@@ -50,8 +50,8 @@
 
 .driver-search-input:focus {
   outline: none;
-  border-color: var(--f1-red);
-  box-shadow: 0 0 0 3px var(--f1-red-glow);
+  border-color: var(--theme-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-color) 25%, transparent);
   background: var(--bg-secondary);
 }
 
@@ -70,8 +70,8 @@
 }
 
 .driver-search-clear:hover {
-  color: var(--f1-red);
-  background: var(--f1-red-glow);
+  color: var(--theme-color);
+  background: color-mix(in srgb, var(--theme-color) 25%, transparent);
 }
 
 /* ─── Search Results Dropdown ─── */
@@ -133,7 +133,7 @@
 }
 
 .driver-search-item.selected {
-  border-left: 3px solid var(--f1-red);
+  border-left: 3px solid var(--theme-color);
   padding-left: 11px;
 }
 
@@ -141,7 +141,7 @@
   font-family: var(--font-geist-mono), monospace;
   font-size: 14px;
   font-weight: 700;
-  color: var(--f1-red);
+  color: var(--theme-color);
   min-width: 28px;
   text-align: center;
 }
@@ -174,7 +174,7 @@
 }
 
 .search-highlight {
-  color: var(--f1-red);
+  color: var(--theme-color);
   font-weight: 700;
 }
 
@@ -450,8 +450,8 @@
 
 .driver-stat-card:hover {
   transform: translateY(-2px);
-  border-color: var(--f1-red);
-  box-shadow: 0 4px 12px var(--f1-red-glow);
+  border-color: var(--theme-color);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--theme-color) 25%, transparent);
 }
 
 .driver-stat-value {
@@ -478,7 +478,7 @@
   letter-spacing: 0.05em;
   padding: 14px 20px;
   background: var(--bg-card);
-  border-left: 4px solid var(--f1-red);
+  border-left: 4px solid var(--theme-color);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   margin-bottom: 24px;
@@ -501,7 +501,7 @@
   align-items: center;
   gap: 8px;
   background: var(--bg-secondary);
-  color: var(--f1-red);
+  color: var(--theme-color);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 8px 14px;
@@ -514,8 +514,8 @@
 }
 
 .season-selector-btn:hover {
-  border-color: var(--f1-red);
-  box-shadow: 0 0 0 2px var(--f1-red-glow);
+  border-color: var(--theme-color);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-color) 25%, transparent);
 }
 
 .season-chevron {
@@ -575,7 +575,7 @@
 }
 
 .season-dropdown-item.active {
-  background: var(--f1-red);
+  background: var(--theme-color);
   color: white;
 }
 
@@ -604,7 +604,7 @@
   padding: 12px 16px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  border-bottom: 2px solid var(--f1-red);
+  border-bottom: 2px solid var(--theme-color);
 }
 
 .results-table-flat td {
@@ -703,7 +703,7 @@
   width: 18px;
   height: 18px;
   border: 2px solid var(--border-color);
-  border-top-color: var(--f1-red);
+  border-top-color: var(--theme-color);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -728,14 +728,14 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   text-decoration: none;
-  border: 1px solid var(--f1-red);
+  border: 1px solid var(--theme-color);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .compare-btn:hover {
-  background: var(--f1-red);
+  background: var(--theme-color);
   color: white;
 }
 

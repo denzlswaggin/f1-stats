@@ -6,6 +6,7 @@ import {
   getMeetings,
   findMatchingMeeting,
 } from "@/app/lib/api";
+import WavesBackground from "./components/WavesBackground";
 import NextRaceCard from "./components/NextRaceCard";
 import StandingsTable from "./components/StandingsTable";
 
@@ -27,6 +28,7 @@ export default async function DashboardPage() {
 
   return (
     <>
+      <WavesBackground />
       {/* Dashboard Header */}
       <div className="page-header" id="dashboard-header">
         <h1>Dashboard – Season Overview</h1>
