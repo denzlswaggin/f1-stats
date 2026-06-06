@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 
+import { logoutUser } from "@/app/actions/auth";
+
 const NAV_LINKS = [
   { href: "/", label: "Dashboard" },
   { href: "/schedule", label: "Schedule" },
@@ -12,7 +14,9 @@ const NAV_LINKS = [
   { href: "/compare", label: "Compare" },
 ];
 
-export default function Navbar() {
+
+
+export default function Navbar({ user }: { user?: { name?: string | null; email?: string | null; image?: string | null } }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -49,26 +53,7 @@ export default function Navbar() {
           aria-expanded={open}
           aria-haspopup="true"
         >
-          {/* Logo placeholder – F1 car icon */}
-          <svg
-            className="navbar-logo-icon"
-            width="22"
-            height="14"
-            viewBox="0 0 22 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-          >
-            <path
-              d="M1 9.5 C1 7 3.5 5 6.5 5 L10 4.5 L13.5 3 L18.5 3.5 L20.5 5.5 L19 7 L15.5 8 L10 9 L5.5 9.5 Z"
-              fill="currentColor"
-              opacity="0.9"
-            />
-            <circle cx="5" cy="11" r="2" fill="currentColor" opacity="0.7" />
-            <circle cx="5" cy="11" r="1" fill="var(--f1-red)" />
-            <circle cx="16" cy="10.5" r="2" fill="currentColor" opacity="0.7" />
-            <circle cx="16" cy="10.5" r="1" fill="var(--f1-red)" />
-          </svg>
+
 
           <div className="navbar-logo-text">
             <span className="navbar-logo-brand">F1 Stats Hub</span>
@@ -118,6 +103,27 @@ export default function Navbar() {
               </Link>
             );
           })}
+          
+          <div style={{ height: "1px", background: "var(--border-color)", margin: "4px 0" }} />
+          
+          {user ? (
+            <button
+              role="menuitem"
+              className="navbar-dropdown-item"
+              style={{ width: "100%", background: "transparent", border: "none", cursor: "pointer" }}
+              onClick={() => {
+                setOpen(false);
+                logoutUser();
+              }}
+            >
+              Log out
+            </button>
+          ) : (
+            <>
+              <Link href="/login" className="navbar-dropdown-item" onClick={() => setOpen(false)}>Log in</Link>
+              <Link href="/register" className="navbar-dropdown-item" onClick={() => setOpen(false)}>Sign up</Link>
+            </>
+          )}
         </div>
       </div>
 

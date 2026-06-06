@@ -142,6 +142,7 @@
     opacity: 0;
     transform: translateY(-6px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -400,6 +401,7 @@
     opacity: 0;
     transform: translateY(12px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -497,7 +499,7 @@
   pointer-events: none;
 }
 
-.upcoming-race-card > * {
+.upcoming-race-card>* {
   position: relative;
   z-index: 1;
 }

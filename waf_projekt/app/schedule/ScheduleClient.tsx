@@ -49,11 +49,11 @@ function formatDate(dateStr: string): string {
 function getRaceStatus(dateStr: string, timeStr: string): "completed" | "next-race" | "upcoming" {
   const now = new Date();
   const raceDateTime = new Date(`${dateStr}T${timeStr || "14:00:00Z"}`);
-  
+
   if (raceDateTime < now) {
     return "completed";
   }
-  
+
   return "upcoming";
 }
 

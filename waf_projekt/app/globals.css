@@ -166,8 +166,8 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
-  height: 56px;
+  padding: 0 32px;
+  height: 68px;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
   position: sticky;
@@ -188,7 +188,7 @@ a {
   font-family: var(--font-geist-mono), monospace;
   background: var(--f1-red);
   color: white;
-  padding: 6px 12px 6px 10px;
+  padding: 8px 16px 8px 14px;
   border-radius: var(--radius-sm);
   border: none;
   cursor: pointer;
@@ -216,7 +216,7 @@ a {
 }
 
 .navbar-logo-brand {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -224,7 +224,7 @@ a {
 }
 
 .navbar-logo-page {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -246,18 +246,20 @@ a {
 
 .navbar-dropdown {
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + 8px);
   left: 0;
   min-width: 180px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 6px;
+  background: rgba(15, 15, 15, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 8px;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-6px);
-  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  transform: translateY(-8px);
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
   z-index: 60;
 }
 
@@ -274,25 +276,31 @@ a {
   align-items: center;
   justify-content: space-between;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-secondary);
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
-  transition: all 0.12s ease;
+  padding: 10px 14px;
+  border-radius: 8px;
+  transition: all 0.15s ease;
   text-decoration: none;
+  margin-bottom: 2px;
+}
+
+.navbar-dropdown-item:last-child {
+  margin-bottom: 0;
 }
 
 .navbar-dropdown-item:hover {
-  color: var(--text-primary);
-  background: var(--bg-secondary);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .navbar-dropdown-item.active {
   color: white;
   background: var(--f1-red);
+  box-shadow: 0 2px 8px rgba(225, 6, 0, 0.4);
 }
 
 /* Active dot indicator */
@@ -306,7 +314,7 @@ a {
 
 .navbar-brand-text {
   font-family: var(--font-geist-mono), monospace;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
   letter-spacing: 0.05em;
   text-transform: uppercase;
