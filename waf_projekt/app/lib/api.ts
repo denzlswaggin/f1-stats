@@ -33,26 +33,34 @@ function delay(ms: number) {
 
 async function fetchJson<T>(url: string, retries = 3): Promise<T> {
   for (let attempt = 0; attempt <= retries; attempt++) {
-    const res = await fetch(url, {
-      next: { revalidate: 300 }, // Cache for 5 minutes
-    });
+    try {
+      const res = await fetch(url, {
+        next: { revalidate: 300 }, // Cache for 5 minutes
+      });
 
-    if (res.status === 429 && attempt < retries) {
+      if (res.status === 429 && attempt < retries) {
+        await delay(600 * Math.pow(2, attempt));
+        continue;
+      }
+
+      if (!res.ok) {
+        throw new ApiError(
+          `API request failed: ${res.status} ${res.statusText}`,
+          res.status
+        );
+      }
+
+      return res.json() as Promise<T>;
+    } catch (error: any) {
+      // If it's the last attempt, or not a fetch/network error (like 404 ApiError), throw it
+      if (attempt >= retries || error instanceof ApiError) {
+        throw error;
+      }
+      // Otherwise it's likely a "fetch failed" (network issue/rate limit abort)
       await delay(600 * Math.pow(2, attempt));
-      continue;
     }
-
-    if (!res.ok) {
-      throw new ApiError(
-        `API request failed: ${res.status} ${res.statusText}`,
-        res.status
-      );
-    }
-
-    return res.json() as Promise<T>;
   }
 
-  // This is unreachable, but TS needs the return type
   throw new ApiError("Max retries exceeded", 429);
 }
 

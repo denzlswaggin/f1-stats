@@ -574,6 +574,15 @@ function UpcomingRaceCard({
 
   return (
     <div className="upcoming-race-card" id="upcoming-race">
+      <img
+        src={`/tracks/${race.locality.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "")}.jpg`}
+        alt={race.locality}
+        className="upcoming-race-bg"
+        onError={(e) => {
+          (e.target as HTMLImageElement).style.display = "none";
+        }}
+      />
+
       <div className="upcoming-race-badge">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" />
@@ -586,25 +595,15 @@ function UpcomingRaceCard({
 
       <div className="upcoming-race-meta">
         <div className="upcoming-race-meta-item">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
+          <img src="/pin.png" alt="Circuit" width={14} height={14} className="upcoming-meta-icon" />
           <span>{race.circuitName}</span>
         </div>
         <div className="upcoming-race-meta-item">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z" />
-          </svg>
+          <img src="/location.png" alt="Location" width={14} height={14} className="upcoming-meta-icon" />
           <span>{race.locality}, {race.country}</span>
         </div>
         <div className="upcoming-race-meta-item">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
-          </svg>
+          <img src="/calendar.png" alt="Date and Time" width={14} height={14} className="upcoming-meta-icon" />
           <span>{formattedDate} · {formattedTime}</span>
         </div>
       </div>

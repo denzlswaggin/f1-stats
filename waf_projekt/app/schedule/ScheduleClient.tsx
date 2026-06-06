@@ -220,6 +220,7 @@ export default function ScheduleClient({ initialRaces, initialSeason }: Props) {
                   href={resultsHref}
                   className="schedule-race-row schedule-race-row-link"
                   id={`schedule-race-${race.round}`}
+                  prefetch={false}
                 >
                   {rowContent}
                 </Link>
