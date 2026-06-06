@@ -77,7 +77,7 @@ export default async function ResultsPage() {
         initialResults={initialResults}
         initialRace={initialRace}
         initialSeason={season}
-        initialTotalRounds={lastCompletedRound}
+        initialTotalRounds={allRounds.length}
       />
     </>
   );

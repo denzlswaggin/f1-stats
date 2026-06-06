@@ -40,32 +40,64 @@ export default async function ResultsDetailPage({ params }: PageProps) {
 
   const race = racesWithResults[0];
 
-  if (!race) {
+  // If we have race results, show them
+  if (race && race.Results && race.Results.length > 0) {
+    const initialResults = race.Results.map((r) => ({
+      position: r.position,
+      positionText: r.positionText,
+      points: r.points,
+      driverName: `${r.Driver.givenName} ${r.Driver.familyName}`,
+      driverCode: r.Driver.code,
+      driverId: r.Driver.driverId,
+      team: r.Constructor.name,
+      time: r.Time?.time || "",
+      status: r.status,
+      laps: r.laps,
+      grid: r.grid,
+      fastestLap: r.FastestLap?.Time?.time,
+    }));
+
+    const initialRace = {
+      round: race.round,
+      raceName: race.raceName,
+      date: race.date,
+      circuitName: race.Circuit.circuitName,
+      country: race.Circuit.Location.country,
+      locality: race.Circuit.Location.locality,
+    };
+
+    return (
+      <>
+        <WavesBackground linecolor="#800000" />
+        <div className="page-header" id="results-header">
+          <h1>Race Results</h1>
+        </div>
+        <ResultsClient
+          initialResults={initialResults}
+          initialRace={initialRace}
+          initialSeason={race.season}
+          initialTotalRounds={allRounds.length}
+        />
+      </>
+    );
+  }
+
+  // No results — check if the round exists in the schedule 
+  const scheduleRace = allRounds.find((r) => r.round === round);
+
+  if (!scheduleRace) {
     notFound();
   }
 
-  const initialResults = race.Results.map((r) => ({
-    position: r.position,
-    positionText: r.positionText,
-    points: r.points,
-    driverName: `${r.Driver.givenName} ${r.Driver.familyName}`,
-    driverCode: r.Driver.code,
-    driverId: r.Driver.driverId,
-    team: r.Constructor.name,
-    time: r.Time?.time || "",
-    status: r.status,
-    laps: r.laps,
-    grid: r.grid,
-    fastestLap: r.FastestLap?.Time?.time,
-  }));
+  // Render with empty results — the client component will fetch schedule data
 
   const initialRace = {
-    round: race.round,
-    raceName: race.raceName,
-    date: race.date,
-    circuitName: race.Circuit.circuitName,
-    country: race.Circuit.Location.country,
-    locality: race.Circuit.Location.locality,
+    round: scheduleRace.round,
+    raceName: scheduleRace.raceName,
+    date: scheduleRace.date,
+    circuitName: scheduleRace.Circuit.circuitName,
+    country: scheduleRace.Circuit.Location.country,
+    locality: scheduleRace.Circuit.Location.locality,
   };
 
   return (
@@ -75,9 +107,9 @@ export default async function ResultsDetailPage({ params }: PageProps) {
         <h1>Race Results</h1>
       </div>
       <ResultsClient
-        initialResults={initialResults}
+        initialResults={[]}
         initialRace={initialRace}
-        initialSeason={race.season}
+        initialSeason={season}
         initialTotalRounds={allRounds.length}
       />
     </>

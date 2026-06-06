@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+
 
 interface ResultData {
   position: string;
@@ -26,6 +26,16 @@ interface RaceInfo {
   circuitName: string;
   country: string;
   locality: string;
+}
+
+interface UpcomingRaceInfo {
+  raceName: string;
+  circuitName: string;
+  locality: string;
+  country: string;
+  date: string;
+  time: string;
+  round: string;
 }
 
 interface Props {
@@ -53,14 +63,15 @@ export default function ResultsClient({
   initialSeason,
   initialTotalRounds,
 }: Props) {
-  const router = useRouter();
   const [selectedSeason, setSelectedSeason] = useState<number>(parseInt(initialSeason));
   const [currentRound, setCurrentRound] = useState<number>(parseInt(initialRace.round));
   const [totalRounds, setTotalRounds] = useState<number>(initialTotalRounds);
   const [results, setResults] = useState<ResultData[]>(initialResults);
   const [raceInfo, setRaceInfo] = useState<RaceInfo>(initialRace);
+  const [upcomingRace, setUpcomingRace] = useState<UpcomingRaceInfo | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSeasonOpen, setIsSeasonOpen] = useState(false);
+  const [countdownNow, setCountdownNow] = useState<Date>(new Date());
   const seasonRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown on outside click
@@ -81,7 +92,29 @@ export default function ResultsClient({
     setTotalRounds(initialTotalRounds);
     setResults(initialResults);
     setRaceInfo(initialRace);
+
+    // If initial results are empty, set upcoming race from initial race data
+    if (initialResults.length === 0 && initialRace.raceName !== "No Data") {
+      setUpcomingRace({
+        raceName: initialRace.raceName,
+        circuitName: initialRace.circuitName,
+        locality: initialRace.locality,
+        country: initialRace.country,
+        date: initialRace.date,
+        time: "14:00:00Z",
+        round: initialRace.round,
+      });
+    } else {
+      setUpcomingRace(null);
+    }
   }, [initialSeason, initialRace, initialResults, initialTotalRounds]);
+
+  // Live countdown timer for upcoming races
+  useEffect(() => {
+    if (!upcomingRace) return;
+    const timer = setInterval(() => setCountdownNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, [upcomingRace]);
 
   // Fetch results when season or round changes (client-side only)
   useEffect(() => {
@@ -91,6 +124,7 @@ export default function ResultsClient({
     ) {
       setResults(initialResults);
       setRaceInfo(initialRace);
+      setUpcomingRace(null);
       return;
     }
 
@@ -98,42 +132,104 @@ export default function ResultsClient({
 
     async function fetchResults() {
       setIsLoading(true);
+      setUpcomingRace(null);
+
+      const minDelay = new Promise((r) => setTimeout(r, 400));
+
       try {
-        const res = await fetch(
-          `https://api.jolpi.ca/ergast/f1/${selectedSeason}/${currentRound}/results.json`
-        );
+        const [res] = await Promise.all([
+          fetch(
+            `https://api.jolpi.ca/ergast/f1/${selectedSeason}/${currentRound}/results.json`
+          ),
+          minDelay,
+        ]);
         if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
         const races = data.MRData.RaceTable.Races;
 
         if (!cancelled && races.length > 0) {
           const race = races[0];
-          setRaceInfo({
-            round: race.round,
-            raceName: race.raceName,
-            date: race.date,
-            circuitName: race.Circuit.circuitName,
-            country: race.Circuit.Location.country,
-            locality: race.Circuit.Location.locality,
-          });
-          setResults(
-            race.Results.map((r: any) => ({
-              position: r.position,
-              positionText: r.positionText,
-              points: r.points,
-              driverName: `${r.Driver.givenName} ${r.Driver.familyName}`,
-              driverCode: r.Driver.code,
-              driverId: r.Driver.driverId,
-              team: r.Constructor.name,
-              time: r.Time?.time || "",
-              status: r.status,
-              laps: r.laps,
-              grid: r.grid,
-              fastestLap: r.FastestLap?.Time?.time,
-            }))
-          );
+
+          // Check if this race has results
+          if (race.Results && race.Results.length > 0) {
+            setRaceInfo({
+              round: race.round,
+              raceName: race.raceName,
+              date: race.date,
+              circuitName: race.Circuit.circuitName,
+              country: race.Circuit.Location.country,
+              locality: race.Circuit.Location.locality,
+            });
+            setResults(
+              race.Results.map((r: any) => ({
+                position: r.position,
+                positionText: r.positionText,
+                points: r.points,
+                driverName: `${r.Driver.givenName} ${r.Driver.familyName}`,
+                driverCode: r.Driver.code,
+                driverId: r.Driver.driverId,
+                team: r.Constructor.name,
+                time: r.Time?.time || "",
+                status: r.status,
+                laps: r.laps,
+                grid: r.grid,
+                fastestLap: r.FastestLap?.Time?.time,
+              }))
+            );
+            setUpcomingRace(null);
+          } else {
+            // Race exists but no results → try schedule
+            setResults([]);
+            await fetchUpcomingRaceInfo(cancelled);
+          }
         } else if (!cancelled) {
+          // No race data in results endpoint → try schedule
           setResults([]);
+          await fetchUpcomingRaceInfo(cancelled);
+        }
+      } catch (error) {
+        console.error("Error fetching results:", error);
+        if (!cancelled) {
+          setResults([]);
+          await fetchUpcomingRaceInfo(cancelled);
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    async function fetchUpcomingRaceInfo(cancelled: boolean) {
+      try {
+        const schedRes = await fetch(
+          `https://api.jolpi.ca/ergast/f1/${selectedSeason}/${currentRound}.json`
+        );
+        if (!schedRes.ok) throw new Error("Schedule fetch failed");
+        const schedData = await schedRes.json();
+        const schedRaces = schedData.MRData.RaceTable.Races;
+
+        if (!cancelled && schedRaces.length > 0) {
+          const sRace = schedRaces[0];
+          setUpcomingRace({
+            raceName: sRace.raceName,
+            circuitName: sRace.Circuit.circuitName,
+            locality: sRace.Circuit.Location.locality,
+            country: sRace.Circuit.Location.country,
+            date: sRace.date,
+            time: sRace.time || "14:00:00Z",
+            round: sRace.round,
+          });
+          setRaceInfo({
+            round: sRace.round,
+            raceName: sRace.raceName,
+            date: sRace.date,
+            circuitName: sRace.Circuit.circuitName,
+            country: sRace.Circuit.Location.country,
+            locality: sRace.Circuit.Location.locality,
+          });
+        } else if (!cancelled) {
+          setUpcomingRace(null);
           setRaceInfo({
             round: currentRound.toString(),
             raceName: "No Data",
@@ -143,14 +239,17 @@ export default function ResultsClient({
             locality: "",
           });
         }
-      } catch (error) {
-        console.error("Error fetching results:", error);
+      } catch {
         if (!cancelled) {
-          setResults([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
+          setUpcomingRace(null);
+          setRaceInfo({
+            round: currentRound.toString(),
+            raceName: "No Data",
+            date: "",
+            circuitName: "",
+            country: "",
+            locality: "",
+          });
         }
       }
     }
@@ -210,7 +309,7 @@ export default function ResultsClient({
     if (currentRound > 1) {
       const newRound = currentRound - 1;
       setCurrentRound(newRound);
-      router.push(`/results/${selectedSeason}/${newRound}`, { scroll: false });
+      window.history.replaceState(null, "", `/results/${selectedSeason}/${newRound}`);
     }
   }
 
@@ -218,7 +317,7 @@ export default function ResultsClient({
     if (currentRound < totalRounds) {
       const newRound = currentRound + 1;
       setCurrentRound(newRound);
-      router.push(`/results/${selectedSeason}/${newRound}`, { scroll: false });
+      window.history.replaceState(null, "", `/results/${selectedSeason}/${newRound}`);
     }
   }
 
@@ -295,101 +394,108 @@ export default function ResultsClient({
       </div>
 
       {/* Results table */}
-      {isLoading ? (
-        <div className="results-loading">
-          <div className="results-loading-spinner" />
-          <span className="results-loading-text">Loading results…</span>
-        </div>
-      ) : results.length === 0 ? (
-        <div className="results-empty">
-          <div className="results-empty-icon">🏁</div>
-          <h2 className="results-empty-title">No Results Available</h2>
-          <p className="results-empty-text">
-            Race results for this round are not yet available.
-          </p>
-        </div>
-      ) : (
-        <>
-          <div className="results-table-container" id="results-table">
-            <table className="results-table">
-              <thead>
-                <tr>
-                  <th>Pos</th>
-                  <th>Driver</th>
-                  <th>Team</th>
-                  <th className="results-col-time">Time / Gap</th>
-                  <th>Pts</th>
-                </tr>
-              </thead>
-              <tbody>
-                {results.map((result) => {
-                  const pos = parseInt(result.position);
-                  const isRetired = result.positionText === "R" || result.status === "Retired";
-                  const isDNF = isRetired || result.status === "Disqualified";
-                  const isWinner = pos === 1;
-                  const pts = parseInt(result.points);
+      <div
+        key={isLoading ? "loading" : `content-${selectedSeason}-${currentRound}`}
+        className="results-content-transition"
+      >
+        {isLoading ? (
+          <div className="results-loading">
+            <div className="results-loading-spinner" />
+            <span className="results-loading-text">Loading results…</span>
+          </div>
+        ) : results.length === 0 && upcomingRace ? (
+          <UpcomingRaceCard race={upcomingRace} now={countdownNow} season={selectedSeason} />
+        ) : results.length === 0 ? (
+          <div className="results-empty">
+            <div className="results-empty-icon">🏁</div>
+            <h2 className="results-empty-title">No Results Available</h2>
+            <p className="results-empty-text">
+              Race results for this round are not yet available.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="results-table-container" id="results-table">
+              <table className="results-table">
+                <thead>
+                  <tr>
+                    <th>Pos</th>
+                    <th>Driver</th>
+                    <th>Team</th>
+                    <th className="results-col-time">Time / Gap</th>
+                    <th>Pts</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {results.map((result) => {
+                    const pos = parseInt(result.position);
+                    const isRetired = result.positionText === "R" || result.status === "Retired";
+                    const isDNF = isRetired || result.status === "Disqualified";
+                    const isWinner = pos === 1;
+                    const pts = parseInt(result.points);
 
-                  let rowClass = "";
-                  if (pos === 1) rowClass = "results-row-p1";
-                  else if (pos === 2) rowClass = "results-row-p2";
-                  else if (pos === 3) rowClass = "results-row-p3";
+                    let rowClass = "";
+                    if (pos === 1) rowClass = "results-row-p1";
+                    else if (pos === 2) rowClass = "results-row-p2";
+                    else if (pos === 3) rowClass = "results-row-p3";
 
-                  let timeDisplay = result.time;
-                  if (!timeDisplay && isDNF) {
-                    timeDisplay = result.status === "Retired" ? "DNF" : result.status;
-                  } else if (!timeDisplay) {
-                    timeDisplay = result.status || "—";
-                  }
+                    let timeDisplay = result.time;
+                    if (!timeDisplay && isDNF) {
+                      timeDisplay = result.status === "Retired" ? "DNF" : result.status;
+                    } else if (!timeDisplay) {
+                      timeDisplay = result.status || "—";
+                    }
 
-                  return (
-                    <tr key={result.position} className={rowClass}>
-                      <td className="results-pos">
-                        {isRetired ? result.positionText : result.position}
-                      </td>
-                      <td>
-                        {/* Driver name → link to driver profile */}
-                        <Link
-                          href={`/driver/${result.driverId}`}
-                          className="results-driver-link"
-                        >
-                          <span className="results-driver-name">
-                            {result.driverName}
-                            <span className="results-driver-code">{result.driverCode}</span>
+                    return (
+                      <tr key={result.position} className={rowClass}>
+                        <td className="results-pos">
+                          {isRetired ? result.positionText : result.position}
+                        </td>
+                        <td>
+                          {/* Driver name → link to driver profile */}
+                          <Link
+                            href={`/driver/${result.driverId}`}
+                            className="results-driver-link"
+                          >
+                            <span className="results-driver-name">
+                              {result.driverName}
+                              <span className="results-driver-code">{result.driverCode}</span>
+                            </span>
+                          </Link>
+                        </td>
+                        <td className="results-team">{result.team}</td>
+                        <td>
+                          <span
+                            className={`results-time${isWinner ? " results-winner-time" : ""}${isDNF ? " results-dnf" : ""}`}
+                          >
+                            {timeDisplay}
                           </span>
-                        </Link>
-                      </td>
-                      <td className="results-team">{result.team}</td>
-                      <td>
-                        <span
-                          className={`results-time${isWinner ? " results-winner-time" : ""}${isDNF ? " results-dnf" : ""}`}
-                        >
-                          {timeDisplay}
-                        </span>
-                      </td>
-                      <td className={`results-pts${pts === 0 ? " results-no-points" : ""}`}>
-                        {result.points}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                        </td>
+                        <td className={`results-pts${pts === 0 ? " results-no-points" : ""}`}>
+                          {result.points}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
 
-          {/* Race info */}
-          <div className="results-race-info">
-            <span>{raceInfo.circuitName}</span>
-            <span className="results-separator">·</span>
-            <span>{raceInfo.locality}, {raceInfo.country}</span>
-            {raceInfo.date && (
-              <>
-                <span className="results-separator">·</span>
-                <span>{formatDate(raceInfo.date)}</span>
-              </>
-            )}
-          </div>
-        </>
-      )}
+            {/* Race info */}
+            <div className="results-race-info">
+              <span>{raceInfo.circuitName}</span>
+              <span className="results-separator">·</span>
+              <span>{raceInfo.locality}, {raceInfo.country}</span>
+              {raceInfo.date && (
+                <>
+                  <span className="results-separator">·</span>
+                  <span>{formatDate(raceInfo.date)}</span>
+                </>
+              )}
+            </div>
+          </>
+        )}
+      </div>
 
       {/* Race navigation */}
       <div className="results-nav" id="results-navigation">
@@ -419,5 +525,134 @@ export default function ResultsClient({
         </button>
       </div>
     </>
+  );
+}
+
+/* ─── Upcoming Race Card ─── */
+
+function UpcomingRaceCard({
+  race,
+  now,
+  season,
+}: {
+  race: UpcomingRaceInfo;
+  now: Date;
+  season: number;
+}) {
+  const raceDate = useMemo(
+    () => new Date(`${race.date}T${race.time}`),
+    [race.date, race.time]
+  );
+  const isPast = raceDate < now;
+
+  const countdown = useMemo(() => {
+    if (isPast) return null;
+    const diff = raceDate.getTime() - now.getTime();
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    return { days, hours, minutes, seconds };
+  }, [raceDate, now, isPast]);
+
+  const formattedDate = useMemo(() => {
+    return raceDate.toLocaleDateString("en-GB", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  }, [raceDate]);
+
+  const formattedTime = useMemo(() => {
+    return raceDate.toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZoneName: "short",
+    });
+  }, [raceDate]);
+
+  return (
+    <div className="upcoming-race-card" id="upcoming-race">
+      <div className="upcoming-race-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+        {isPast ? "Awaiting Results" : "Upcoming Race"}
+      </div>
+
+      <h2 className="upcoming-race-name">{race.raceName}</h2>
+
+      <div className="upcoming-race-meta">
+        <div className="upcoming-race-meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          <span>{race.circuitName}</span>
+        </div>
+        <div className="upcoming-race-meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z" />
+          </svg>
+          <span>{race.locality}, {race.country}</span>
+        </div>
+        <div className="upcoming-race-meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          <span>{formattedDate} · {formattedTime}</span>
+        </div>
+      </div>
+
+      {countdown && (
+        <div className="upcoming-countdown">
+          <div className="upcoming-countdown-grid">
+            <div className="upcoming-countdown-unit">
+              <span className="upcoming-countdown-value">{String(countdown.days).padStart(2, "0")}</span>
+              <span className="upcoming-countdown-text">Days</span>
+            </div>
+            <span className="upcoming-countdown-sep">:</span>
+            <div className="upcoming-countdown-unit">
+              <span className="upcoming-countdown-value">{String(countdown.hours).padStart(2, "0")}</span>
+              <span className="upcoming-countdown-text">Hrs</span>
+            </div>
+            <span className="upcoming-countdown-sep">:</span>
+            <div className="upcoming-countdown-unit">
+              <span className="upcoming-countdown-value">{String(countdown.minutes).padStart(2, "0")}</span>
+              <span className="upcoming-countdown-text">Min</span>
+            </div>
+            <span className="upcoming-countdown-sep">:</span>
+            <div className="upcoming-countdown-unit">
+              <span className="upcoming-countdown-value">{String(countdown.seconds).padStart(2, "0")}</span>
+              <span className="upcoming-countdown-text">Sec</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isPast && (
+        <p className="upcoming-race-pending">
+          The race has finished — results are being processed and will appear shortly.
+        </p>
+      )}
+
+      <Link
+        href={`/schedule/${season}`}
+        className="upcoming-schedule-link"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+        View Full Schedule
+      </Link>
+    </div>
   );
 }

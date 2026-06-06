@@ -202,13 +202,9 @@ export default function ScheduleClient({ initialRaces, initialSeason }: Props) {
                   {/* Status badge / Results link */}
                   <div className="schedule-status">
                     {isCompleted ? (
-                      <Link
-                        href={resultsHref}
-                        className="schedule-status-badge completed schedule-results-link"
-                        onClick={(e) => e.stopPropagation()}
-                      >
+                      <span className="schedule-status-badge completed schedule-results-link">
                         Results →
-                      </Link>
+                      </span>
                     ) : (
                       <span className={`schedule-status-badge ${status}`}>
                         {status === "next-race" ? "Next Race" : "Upcoming"}
