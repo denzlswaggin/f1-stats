@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import WavesBackground from "./components/WavesBackground";
 import { cn } from "@/lib/utils";
+import { auth } from "@/auth";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -23,11 +24,13 @@ export const metadata: Metadata = {
     "Real-time Formula 1 statistics, standings, race schedules, and driver comparisons. Powered by live F1 data.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html
       lang="en"
@@ -35,7 +38,7 @@ export default function RootLayout({
     >
       <body>
         <div className="app-container" style={{ position: 'relative', zIndex: 1 }}>
-          <Navbar />
+          <Navbar user={session?.user} />
           <main className="main-content">{children}</main>
         </div>
       </body>
