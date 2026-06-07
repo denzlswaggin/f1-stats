@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import WavesBackground from "./components/WavesBackground";
 import { cn } from "@/lib/utils";
+import { CollectionProvider } from "@/context/CollectionContext"; // Důležitý import
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -34,10 +35,13 @@ export default function RootLayout({
       className={cn("antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
     >
       <body>
-        <div className="app-container" style={{ position: 'relative', zIndex: 1 }}>
-          <Navbar />
-          <main className="main-content">{children}</main>
-        </div>
+        {}
+        <CollectionProvider>
+          <div className="app-container" style={{ position: 'relative', zIndex: 1 }}>
+            <Navbar />
+            <main className="main-content">{children}</main>
+          </div>
+        </CollectionProvider>
       </body>
     </html>
   );

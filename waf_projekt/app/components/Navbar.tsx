@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { href: "/results", label: "Results" },
   { href: "/driver", label: "Drivers" },
   { href: "/compare", label: "Compare" },
+  { href: "/packs", label: "Packs" },
 ];
 
 export default function Navbar() {
@@ -98,7 +99,6 @@ export default function Navbar() {
           id="navbar-dropdown"
           role="menu"
         >
-
           {NAV_LINKS.map((link) => {
             const isActive =
               link.href === "/"
