@@ -1,3 +1,5 @@
+"use client";
+
 import Countdown from "./Countdown";
 import type { Race, OpenF1Meeting } from "@/app/lib/types";
 
@@ -24,8 +26,23 @@ export default function NextRaceCard({ race, meeting }: NextRaceCardProps) {
     timeZoneName: "short",
   });
 
+  // Build track image path using the same pattern as results cards
+  const trackImageSlug = race.Circuit.Location.locality
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+
   return (
     <div className="next-race-card" id="next-race-card">
+      <img
+        src={`/tracks/${trackImageSlug}.jpg`}
+        alt={race.Circuit.Location.locality}
+        className="next-race-bg"
+        onError={(e) => {
+          (e.target as HTMLImageElement).style.display = "none";
+        }}
+      />
       <div className="next-race-label">Next Race</div>
 
       {meeting?.country_flag && (

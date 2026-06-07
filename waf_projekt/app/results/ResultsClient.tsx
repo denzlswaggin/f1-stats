@@ -124,7 +124,9 @@ export default function ResultsClient({
     ) {
       setResults(initialResults);
       setRaceInfo(initialRace);
-      setUpcomingRace(null);
+      if (initialResults.length > 0) {
+        setUpcomingRace(null);
+      }
       return;
     }
 

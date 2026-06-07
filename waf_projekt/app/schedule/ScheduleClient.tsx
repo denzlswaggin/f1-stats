@@ -214,24 +214,16 @@ export default function ScheduleClient({ initialRaces, initialSeason }: Props) {
                 </>
               );
 
-              return isCompleted ? (
+              return (
                 <Link
                   key={`${selectedSeason}-${race.round}`}
                   href={resultsHref}
-                  className="schedule-race-row schedule-race-row-link"
+                  className={`schedule-race-row schedule-race-row-link${status === "next-race" ? " next-race" : ""}`}
                   id={`schedule-race-${race.round}`}
                   prefetch={false}
                 >
                   {rowContent}
                 </Link>
-              ) : (
-                <div
-                  key={`${selectedSeason}-${race.round}`}
-                  className={`schedule-race-row${status === "next-race" ? " next-race" : ""}`}
-                  id={`schedule-race-${race.round}`}
-                >
-                  {rowContent}
-                </div>
               );
             })}
           </div>
