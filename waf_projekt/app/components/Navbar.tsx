@@ -106,30 +106,27 @@ export default function Navbar({ user }: { user?: { name?: string | null; email?
             );
           })}
           
-          <div style={{ height: "1px", background: "var(--border-color)", margin: "4px 0" }} />
-          
-          {user ? (
-            <button
-              role="menuitem"
-              className="navbar-dropdown-item"
-              style={{ width: "100%", background: "transparent", border: "none", cursor: "pointer" }}
-              onClick={() => {
-                setOpen(false);
-                logoutUser();
-              }}
-            >
-              Log out
-            </button>
-          ) : (
-            <>
-              <Link href="/login" className="navbar-dropdown-item" onClick={() => setOpen(false)}>Log in</Link>
-              <Link href="/register" className="navbar-dropdown-item" onClick={() => setOpen(false)}>Sign up</Link>
-            </>
-          )}
         </div>
       </div>
 
-      <span className="navbar-brand-text" aria-hidden="true">F1 Stats Hub</span>
+      <div className="navbar-right">
+        {user ? (
+          <div className="navbar-user" style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <span className="navbar-brand-text" aria-hidden="true">{user.name || user.email || "F1 Stats Hub"}</span>
+            <button
+              className="navbar-auth-btn"
+              onClick={() => logoutUser()}
+            >
+              Log out
+            </button>
+          </div>
+        ) : (
+          <div className="navbar-auth" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <Link href="/login" className="navbar-auth-link">Log in</Link>
+            <Link href="/register" className="navbar-auth-btn">Sign up</Link>
+          </div>
+        )}
+      </div>
     </nav>
   );
 }
