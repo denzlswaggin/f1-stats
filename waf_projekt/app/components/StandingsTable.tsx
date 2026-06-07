@@ -1,4 +1,5 @@
 import type { DriverStanding, ConstructorStanding } from "@/app/lib/types";
+import Link from "next/link";
 
 interface DriverStandingsTableProps {
   type: "drivers";
@@ -24,9 +25,14 @@ export default function StandingsTable(props: StandingsTableProps) {
       ? `Driver Standings – ${season}`
       : `Constructor Standings`;
 
+  const linkHref = type === "drivers" ? "/driver-standings" : "/constructor-standings";
+
   return (
     <div className="standings-section" id={`${type}-standings`}>
-      <div className="standings-header">{title}</div>
+      <Link href={linkHref} className="standings-header">
+        <span>{title}</span>
+        <span className="standings-header-arrow">&rarr;</span>
+      </Link>
 
       <table className="standings-table">
         <thead>
@@ -50,8 +56,13 @@ export default function StandingsTable(props: StandingsTableProps) {
                   <tr key={standing.Driver.driverId}>
                     <td>{standing.position}</td>
                     <td className="driver-name">
-                      {standing.Driver.givenName}{" "}
-                      {standing.Driver.familyName}
+                      <Link 
+                        href={`/driver/${standing.Driver.driverId}`}
+                        className="driver-link"
+                      >
+                        {standing.Driver.givenName}{" "}
+                        {standing.Driver.familyName}
+                      </Link>
                     </td>
                     <td className="team-name">
                       {standing.Constructors[0]?.name || "–"}

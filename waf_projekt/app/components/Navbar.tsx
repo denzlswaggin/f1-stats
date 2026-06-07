@@ -10,6 +10,8 @@ const NAV_LINKS = [
   { href: "/", label: "Dashboard" },
   { href: "/schedule", label: "Schedule" },
   { href: "/results", label: "Results" },
+  { href: "/driver-standings", label: "Driver Standings" },
+  { href: "/constructor-standings", label: "Constructor Standings" },
   { href: "/driver", label: "Drivers" },
   { href: "/compare", label: "Compare" },
 ];
@@ -24,7 +26,7 @@ export default function Navbar({ user }: { user?: { name?: string | null; email?
   // Resolve current page label (match prefix for dynamic routes)
   const currentLabel =
     NAV_LINKS.find((l) =>
-      l.href === "/" ? pathname === "/" : pathname.startsWith(l.href)
+      l.href === "/" ? pathname === "/" : (pathname === l.href || pathname.startsWith(`${l.href}/`))
     )?.label ?? "Menu";
 
   // Close dropdown when clicking outside
@@ -88,7 +90,7 @@ export default function Navbar({ user }: { user?: { name?: string | null; email?
             const isActive =
               link.href === "/"
                 ? pathname === "/"
-                : pathname.startsWith(link.href);
+                : (pathname === link.href || pathname.startsWith(`${link.href}/`));
             return (
               <Link
                 key={link.href}

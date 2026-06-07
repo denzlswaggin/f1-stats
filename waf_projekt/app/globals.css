@@ -550,6 +550,27 @@ a {
   background: var(--bg-table-row);
   border-bottom: 2px solid var(--f1-red);
   color: var(--text-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+a.standings-header:hover {
+  background: var(--bg-card-hover);
+  color: var(--f1-red);
+}
+
+.standings-header-arrow {
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+a.standings-header:hover .standings-header-arrow {
+  transform: translateX(4px);
 }
 
 .standings-table {
@@ -608,6 +629,16 @@ a {
 
 .driver-name {
   font-weight: 500;
+}
+
+.driver-link {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.15s ease;
+}
+
+.driver-link:hover {
+  color: var(--f1-red);
 }
 
 .team-name {
