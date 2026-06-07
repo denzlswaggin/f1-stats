@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { loginUser } from "@/app/actions/auth";
 import "../auth.css";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const registered = searchParams.get("registered");
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
   
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -20,15 +20,13 @@ function LoginForm() {
     setError(null);
 
     const formData = new FormData(e.currentTarget);
-    const res = await loginUser(formData);
+    const res = await loginUser(formData, callbackUrl);
 
     if (res?.error) {
       setError(res.error);
       setLoading(false);
-    } else {
-      router.push("/");
-      router.refresh();
     }
+    // On success, signIn() handles the redirect automatically via NEXT_REDIRECT
   }
 
   return (

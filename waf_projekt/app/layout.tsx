@@ -35,6 +35,7 @@ export default async function RootLayout({
     <html
       lang="en"
       className={cn("antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
+      suppressHydrationWarning
     >
       <body>
         <div className="app-container" style={{ position: 'relative', zIndex: 1 }}>

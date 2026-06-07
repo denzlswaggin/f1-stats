@@ -122,7 +122,7 @@ export default function Navbar({ user }: { user?: { name?: string | null; email?
           </div>
         ) : (
           <div className="navbar-auth" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <Link href="/login" className="navbar-auth-link">Log in</Link>
+            <Link href={`/login?callbackUrl=${encodeURIComponent(pathname)}`} className="navbar-auth-link">Log in</Link>
             <Link href="/register" className="navbar-auth-btn">Sign up</Link>
           </div>
         )}

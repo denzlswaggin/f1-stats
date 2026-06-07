@@ -49,9 +49,13 @@ export async function registerUser(formData: FormData) {
   }
 }
 
-export async function loginUser(formData: FormData) {
+export async function loginUser(formData: FormData, callbackUrl?: string) {
   try {
-    await signIn("credentials", formData);
+    await signIn("credentials", {
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+      redirectTo: callbackUrl || "/",
+    });
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
