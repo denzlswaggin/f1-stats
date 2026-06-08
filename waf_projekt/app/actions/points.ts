@@ -3,38 +3,36 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 
-// ── Constants ──────────────────────────────────────────
 const PACK_COST = 50;
 const DAILY_LOGIN_REWARD = 10;
 const PAGE_VIEW_REWARD = 5;
 const DRIVER_VIEW_REWARD = 3;
 
 const DRIVER_CARDS = [
-  { driverId: "albon", name: "Alex Albon", image: "/drivers/albon_signature.png" },
-  { driverId: "alonso", name: "Fernando Alonso", image: "/drivers/alonso_signature.png" },
-  { driverId: "antonelli", name: "Kimi Antonelli", image: "/drivers/antonelli_signature.png" },
-  { driverId: "bearman", name: "Oliver Bearman", image: "/drivers/bearman_signature.png" },
-  { driverId: "bortoleto", name: "Gabriel Bortoleto", image: "/drivers/bortoleto_signature.png" },
-  { driverId: "bottas", name: "Valtteri Bottas", image: "/drivers/bottas_signature.png" },
-  { driverId: "colapinto", name: "Franco Colapinto", image: "/drivers/colapinto_signature.png" },
-  { driverId: "gasly", name: "Pierre Gasly", image: "/drivers/gasly_signature.png" },
-  { driverId: "hadjar", name: "Isack Hadjar", image: "/drivers/hadjar_signature.png" },
-  { driverId: "hamilton", name: "Lewis Hamilton", image: "/drivers/hamilton_signature.png" },
-  { driverId: "hulkenberg", name: "Nico Hulkenberg", image: "/drivers/hulkenberg_signature.png" },
-  { driverId: "perez", name: "Sergio Perez", image: "/drivers/checo_signature.png" },
-  { driverId: "lawson", name: "Liam Lawson", image: "/drivers/lawson_signature.png" },
-  { driverId: "leclerc", name: "Charles Leclerc", image: "/drivers/leclerc_signature.png" },
-  { driverId: "lindblad", name: "Arvid Lindblad", image: "/drivers/lindblad_signature.png" },
-  { driverId: "norris", name: "Lando Norris", image: "/drivers/norris_signature.png" },
-  { driverId: "ocon", name: "Esteban Ocon", image: "/drivers/ocon_signature.png" },
-  { driverId: "piastri", name: "Oscar Piastri", image: "/drivers/piastri_signature.png" },
-  { driverId: "russell", name: "George Russell", image: "/drivers/russel_signature.png" },
-  { driverId: "sainz", name: "Carlos Sainz", image: "/drivers/sainz_signature.png" },
-  { driverId: "stroll", name: "Lance Stroll", image: "/drivers/stroll_signature.png" },
-  { driverId: "verstappen", name: "Max Verstappen", image: "/drivers/verstappen_signature.png" },
+  { driverId: "albon", name: "Alex Albon", image: "/drivers/albon_signature.png", rarity: "common" },
+  { driverId: "alonso", name: "Fernando Alonso", image: "/drivers/alonso_signature.png", rarity: "common" },
+  { driverId: "antonelli", name: "Kimi Antonelli", image: "/drivers/antonelli_signature.png", rarity: "legendary" },
+  { driverId: "bearman", name: "Oliver Bearman", image: "/drivers/bearman_signature.png", rarity: "rare" },
+  { driverId: "bortoleto", name: "Gabriel Bortoleto", image: "/drivers/bortoleto_signature.png", rarity: "common" },
+  { driverId: "bottas", name: "Valtteri Bottas", image: "/drivers/bottas_signature.png", rarity: "common" },
+  { driverId: "colapinto", name: "Franco Colapinto", image: "/drivers/colapinto_signature.png", rarity: "rare" },
+  { driverId: "gasly", name: "Pierre Gasly", image: "/drivers/gasly_signature.png", rarity: "rare" },
+  { driverId: "hadjar", name: "Isack Hadjar", image: "/drivers/hadjar_signature.png", rarity: "rare" },
+  { driverId: "hamilton", name: "Lewis Hamilton", image: "/drivers/hamilton_signature.png", rarity: "epic" },
+  { driverId: "hulkenberg", name: "Nico Hulkenberg", image: "/drivers/hulkenberg_signature.png", rarity: "common" },
+  { driverId: "perez", name: "Sergio Perez", image: "/drivers/checo_signature.png", rarity: "common" },
+  { driverId: "lawson", name: "Liam Lawson", image: "/drivers/lawson_signature.png", rarity: "rare" },
+  { driverId: "leclerc", name: "Charles Leclerc", image: "/drivers/leclerc_signature.png", rarity: "epic" },
+  { driverId: "lindblad", name: "Arvid Lindblad", image: "/drivers/lindblad_signature.png", rarity: "common" },
+  { driverId: "norris", name: "Lando Norris", image: "/drivers/norris_signature.png", rarity: "epic" },
+  { driverId: "ocon", name: "Esteban Ocon", image: "/drivers/ocon_signature.png", rarity: "common" },
+  { driverId: "piastri", name: "Oscar Piastri", image: "/drivers/piastri_signature.png", rarity: "epic" },
+  { driverId: "russell", name: "George Russell", image: "/drivers/russel_signature.png", rarity: "epic" },
+  { driverId: "sainz", name: "Carlos Sainz", image: "/drivers/sainz_signature.png", rarity: "common" },
+  { driverId: "stroll", name: "Lance Stroll", image: "/drivers/stroll_signature.png", rarity: "common" },
+  { driverId: "verstappen", name: "Max Verstappen", image: "/drivers/verstappen_signature.png", rarity: "epic" },
 ];
 
-// ── Helpers ────────────────────────────────────────────
 
 async function getAuthUserId(): Promise<string | null> {
   const session = await auth();
@@ -77,7 +75,6 @@ async function awardCoins(userId: string, amount: number, reason: string) {
   ]);
 }
 
-// ── Public Actions ─────────────────────────────────────
 
 export async function getUserBalance(): Promise<number> {
   const userId = await getAuthUserId();
@@ -96,9 +93,18 @@ export async function getUserCollection() {
   const userId = await getAuthUserId();
   if (!userId) return [];
 
-  return prisma.collectedCard.findMany({
+  const cards = await prisma.collectedCard.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
+  });
+
+  // Dynamically map rarity so old cards are updated
+  return cards.map((card) => {
+    const driverDef = DRIVER_CARDS.find((d) => d.driverId === card.driverId);
+    if (driverDef) {
+      card.rarity = driverDef.rarity;
+    }
+    return card;
   });
 }
 
@@ -169,8 +175,23 @@ export async function openPack(): Promise<{
     return { success: false, error: "Not enough coins" };
   }
 
-  // Pick random card
-  const randomDriver = DRIVER_CARDS[Math.floor(Math.random() * DRIVER_CARDS.length)];
+  // Roll for rarity based on weighted probabilities
+  const roll = Math.random() * 100;
+  let selectedRarity = "common";
+
+  if (roll < 2) {
+    selectedRarity = "legendary"; // 2% chance
+  } else if (roll < 10) {
+    selectedRarity = "epic";      // 8% chance (2% - 10%)
+  } else if (roll < 35) {
+    selectedRarity = "rare";      // 25% chance (10% - 35%)
+  } else {
+    selectedRarity = "common";    // 65% chance (35% - 100%)
+  }
+
+  // Filter pool by selected rarity
+  const pool = DRIVER_CARDS.filter(d => d.rarity === selectedRarity);
+  const randomDriver = pool[Math.floor(Math.random() * pool.length)];
 
   // Create transactions
   const transactions: any[] = [];
@@ -196,6 +217,7 @@ export async function openPack(): Promise<{
         driverId: randomDriver.driverId,
         name: randomDriver.name,
         image: randomDriver.image,
+        rarity: randomDriver.rarity,
       },
     })
   );
@@ -204,7 +226,7 @@ export async function openPack(): Promise<{
 
   return {
     success: true,
-    card: { ...randomDriver, rarity: "common" },
+    card: randomDriver,
     newBalance: user.isAdmin ? 999999999 : user.coins - PACK_COST,
   };
 }
@@ -218,4 +240,57 @@ export async function getPointsHistory(limit = 20) {
     orderBy: { createdAt: "desc" },
     take: limit,
   });
+}
+
+export async function sellCard(driverId: string): Promise<{ success: boolean; error?: string; coinsEarned?: number }> {
+  const userId = await getAuthUserId();
+  if (!userId) return { success: false, error: "Not authenticated" };
+
+  // Find one card of this driver owned by the user
+  const card = await prisma.collectedCard.findFirst({
+    where: { userId, driverId },
+  });
+
+  if (!card) {
+    return { success: false, error: "Card not found in your collection" };
+  }
+
+  // Determine sell price based on correct rarity
+  const driverDef = DRIVER_CARDS.find((d) => d.driverId === card.driverId);
+  const effectiveRarity = driverDef?.rarity || card.rarity;
+
+  let sellPrice = 25;
+  if (effectiveRarity === "rare") sellPrice = 50;
+  if (effectiveRarity === "epic") sellPrice = 100;
+  if (effectiveRarity === "legendary") sellPrice = 250;
+
+  // Transaction: Delete card and award coins
+  const transactions: any[] = [
+    prisma.collectedCard.delete({
+      where: { id: card.id },
+    })
+  ];
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { isAdmin: true },
+  });
+
+  if (!user?.isAdmin) {
+    transactions.push(
+      prisma.user.update({
+        where: { id: userId },
+        data: { coins: { increment: sellPrice } },
+      })
+    );
+    transactions.push(
+      prisma.pointsLog.create({
+        data: { userId, amount: sellPrice, reason: "sell_card" },
+      })
+    );
+  }
+
+  await prisma.$transaction(transactions);
+
+  return { success: true, coinsEarned: sellPrice };
 }

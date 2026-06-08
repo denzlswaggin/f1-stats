@@ -14,6 +14,7 @@ interface Card {
 interface CollectionContextValue {
   collection: Card[];
   coins: number;
+  isLoggedIn: boolean;
   refreshCollection: () => Promise<void>;
   refreshCoins: () => Promise<void>;
 }
@@ -61,7 +62,7 @@ export function CollectionProvider({
   }, [refreshCoins]);
 
   return (
-    <CollectionContext.Provider value={{ collection, coins, refreshCollection, refreshCoins }}>
+    <CollectionContext.Provider value={{ collection, coins, isLoggedIn, refreshCollection, refreshCoins }}>
       {children}
     </CollectionContext.Provider>
   );
@@ -69,6 +70,6 @@ export function CollectionProvider({
 
 export const useCollection = () => {
   const context = useContext(CollectionContext);
-  if (!context) return { collection: [], coins: 0, refreshCollection: async () => {}, refreshCoins: async () => {} };
+  if (!context) return { collection: [], coins: 0, isLoggedIn: false, refreshCollection: async () => {}, refreshCoins: async () => {} };
   return context;
 };

@@ -1285,6 +1285,178 @@ a.standings-header:hover .standings-header-arrow {
 }
 
 /* ============================================
+   Auth Prompt (Login Required State)
+   ============================================ */
+
+.auth-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px;
+  margin: 40px auto;
+  max-width: 480px;
+  background: linear-gradient(145deg, rgba(30, 30, 30, 0.4) 0%, rgba(15, 15, 15, 0.6) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-prompt::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--f1-red), transparent);
+  opacity: 0.8;
+}
+
+.auth-prompt-icon {
+  font-size: 48px;
+  margin-bottom: 24px;
+  filter: drop-shadow(0 0 16px rgba(225, 6, 0, 0.4));
+  animation: float 4s ease-in-out infinite;
+}
+
+.auth-prompt-title {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 24px;
+  font-weight: 800;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.auth-prompt-text {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 32px;
+  max-width: 320px;
+}
+
+.auth-prompt-actions {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  justify-content: center;
+}
+
+.auth-prompt-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 14px 28px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.auth-prompt-btn-primary {
+  background: var(--f1-red);
+  color: white;
+  box-shadow: 0 4px 16px rgba(225, 6, 0, 0.3);
+}
+
+.auth-prompt-btn-primary:hover {
+  background: var(--f1-red-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(225, 6, 0, 0.5);
+}
+
+.auth-prompt-btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.auth-prompt-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* ============================================
+   Rarity Effects
+   ============================================ */
+
+.rarity-common {
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+}
+
+.rarity-rare {
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+}
+
+.rarity-epic {
+  filter: drop-shadow(0 0 24px rgba(0, 220, 255, 0.5));
+}
+
+.rarity-legendary {
+  filter: drop-shadow(0 0 32px rgba(200, 0, 255, 0.6));
+}
+
+.collection-card:hover .rarity-rare {
+  filter: drop-shadow(0 8px 24px rgba(255, 215, 0, 0.8));
+}
+
+.collection-card:hover .rarity-epic {
+  filter: drop-shadow(0 8px 30px rgba(0, 220, 255, 0.8));
+}
+
+.collection-card:hover .rarity-legendary {
+  filter: drop-shadow(0 8px 40px rgba(200, 0, 255, 0.9));
+}
+
+.sell-btn {
+  background: var(--f1-red);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  transform: translateY(10px);
+  opacity: 0;
+}
+
+.collection-card:hover .sell-btn {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.sell-btn:hover {
+  background: #ff1a1a;
+  transform: scale(1.05) !important;
+}
+
+.sell-btn:disabled {
+  background: #555;
+  cursor: not-allowed;
+  transform: scale(1) !important;
+}
+
+/* ============================================
    Responsive – Packs & Coins
    ============================================ */
 

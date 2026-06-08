@@ -1,9 +1,36 @@
 "use client";
 import { useCollection } from "../../context/CollectionContext";
 import Link from "next/link";
+import { useState } from "react";
+import { sellCard } from "@/app/actions/points";
+import "../(auth)/auth.css";
 
 export default function CollectionPage() {
-  const { collection, coins } = useCollection();
+  const { collection, coins, isLoggedIn, refreshCollection, refreshCoins } = useCollection();
+  const [sellingId, setSellingId] = useState<string | null>(null);
+
+  const getSellPrice = (rarity: string) => {
+    if (rarity === "legendary") return 250;
+    if (rarity === "epic") return 100;
+    if (rarity === "rare") return 50;
+    return 25;
+  };
+
+  const handleSell = async (driverId: string) => {
+    if (sellingId) return;
+    setSellingId(driverId);
+
+    const result = await sellCard(driverId);
+    if (result.success) {
+      await refreshCollection();
+      await refreshCoins();
+      window.dispatchEvent(new CustomEvent("coins-updated"));
+    } else {
+      alert(result.error || "Failed to sell card");
+    }
+
+    setSellingId(null);
+  };
 
   // Count duplicates
   const driverCounts = collection.reduce((acc, card) => {
@@ -11,25 +38,61 @@ export default function CollectionPage() {
     return acc;
   }, {} as Record<string, number>);
 
+  const rarityOrder: Record<string, number> = {
+    legendary: 4,
+    epic: 3,
+    rare: 2,
+    common: 1,
+  };
+
   // Unique drivers for display
-  const uniqueDrivers = collection.filter(
-    (card, idx, arr) => arr.findIndex((c) => c.driverId === card.driverId) === idx
-  );
+  const uniqueDrivers = collection
+    .filter((card, idx, arr) => arr.findIndex((c) => c.driverId === card.driverId) === idx)
+    .sort((a, b) => {
+      const orderA = rarityOrder[a.rarity] || 0;
+      const orderB = rarityOrder[b.rarity] || 0;
+      if (orderA !== orderB) {
+        return orderB - orderA; // Descending (legendary first)
+      }
+      return a.name.localeCompare(b.name);
+    });
 
   return (
     <div className="main-content">
       <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1>My Collection ({uniqueDrivers.length}/22 drivers · {collection.length} cards)</h1>
-        <Link
-          href="/packs"
-          className="navbar-logo"
-          style={{ fontSize: "10px", padding: "6px 12px", textDecoration: "none" }}
-        >
-          🪙 {coins} · OPEN PACKS
-        </Link>
+        <h1>My Collection {isLoggedIn && `(${uniqueDrivers.length}/22 drivers · ${collection.length} cards)`}</h1>
+        {isLoggedIn && (
+          <Link
+            href="/packs"
+            className="navbar-logo"
+            style={{ fontSize: "10px", padding: "6px 12px", textDecoration: "none" }}
+          >
+            BACK TO PACKS
+          </Link>
+        )}
       </div>
 
-      {collection.length === 0 ? (
+      {!isLoggedIn ? (
+        <div className="auth-container" style={{ minHeight: 'auto', padding: '60px 20px' }}>
+          <div className="auth-card" style={{ textAlign: 'center' }}>
+            <div className="auth-header" style={{ marginBottom: '24px' }}>
+              <h2 className="auth-title">Your Garage is Locked</h2>
+              <p className="auth-subtitle" style={{ marginTop: '12px' }}>
+                Sign in to collect, view, and manage your exclusive F1 driver cards.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginTop: '32px' }}>
+              <Link href="/login" className="auth-button" style={{ textDecoration: 'none', padding: '12px 24px' }}>
+                Log In
+              </Link>
+              <Link href="/register" className="auth-button" style={{ background: 'var(--bg-input)', border: '1px solid var(--border-color)', color: 'white', textDecoration: 'none', padding: '12px 24px' }}>
+                Register
+              </Link>
+            </div>
+          </div>
+        </div>
+      ) : collection.length === 0 ? (
         <div className="coming-soon">
           <div className="coming-soon-icon">🃏</div>
           <h2>No cards yet</h2>
@@ -45,10 +108,21 @@ export default function CollectionPage() {
       ) : (
         <div className="collection-grid">
           {uniqueDrivers.map((card) => (
-            <div key={card.driverId} className="collection-card">
-              <img src={card.image} alt={card.name} className="collection-card-image" />
+            <div key={card.driverId} className="collection-card group">
+              <img src={card.image} alt={card.name} className={`collection-card-image rarity-${card.rarity}`} />
+
+              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center backdrop-blur-[2px] z-10">
+                <button
+                  className="sell-btn"
+                  onClick={() => handleSell(card.driverId)}
+                  disabled={sellingId === card.driverId}
+                >
+                  {sellingId === card.driverId ? "SELLING..." : `SELL FOR ${getSellPrice(card.rarity)} 🪙`}
+                </button>
+              </div>
+
               {driverCounts[card.driverId] > 1 && (
-                <div className="collection-card-badge">
+                <div className="collection-card-badge z-20">
                   <span className="collection-card-count">×{driverCounts[card.driverId]}</span>
                 </div>
               )}

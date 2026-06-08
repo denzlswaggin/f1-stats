@@ -52,7 +52,7 @@ export default function PackOpener() {
             <div className="pack-card-glow" />
             <div className="pack-card-inner">
               <div className="pack-card-logo">F1</div>
-              <div className="pack-card-title">DRIVER PACK</div>
+              <div className="pack-card-title">SIGNATURE PACK</div>
               <div className="pack-card-subtitle">1 random driver card</div>
             </div>
           </div>
@@ -84,7 +84,7 @@ export default function PackOpener() {
       {card && (
         <div className="pack-reveal">
           <div className="pack-revealed-card">
-            <img src={card.image} alt={card.name} className="pack-card-image" />
+            <img src={card.image} alt={card.name} className={`pack-card-image rarity-${card.rarity}`} />
           </div>
           <button onClick={() => setCard(null)} className="pack-close-btn" id="close-card-btn">
             CLOSE
