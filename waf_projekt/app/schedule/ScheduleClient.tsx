@@ -91,6 +91,7 @@ export default function ScheduleClient({ initialRaces, initialSeason }: Props) {
   useEffect(() => {
     setSelectedSeason(parseInt(initialSeason));
     setRaces(initialRaces);
+    setIsLoading(false);
   }, [initialSeason, initialRaces]);
 
   // When season changes via dropdown, navigate to the new season URL
