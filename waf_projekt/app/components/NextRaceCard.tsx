@@ -62,14 +62,14 @@ export default function NextRaceCard({ race, meeting }: NextRaceCardProps) {
         🏁 {race.raceName}
       </h2>
 
-      <p className="next-race-circuit">
+      <p className="next-race-circuit" suppressHydrationWarning>
         {race.Circuit.circuitName} · {formattedDate}
       </p>
 
       <Countdown targetDate={raceDateTime} />
 
       <p className="next-race-info">
-        <span>Race start: {formattedTime}</span>
+        <span suppressHydrationWarning>Race start: {formattedTime}</span>
         <span className="separator">|</span>
         <span>Round {race.round}</span>
       </p>
