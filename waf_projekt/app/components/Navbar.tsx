@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { href: "/constructor-standings", label: "Constructor Standings" },
   { href: "/driver", label: "Drivers" },
   { href: "/compare", label: "Compare" },
+  { href: "/packs", label: "Packs" },
 ];
 
 
@@ -85,7 +86,6 @@ export default function Navbar({ user }: { user?: { name?: string | null; email?
           id="navbar-dropdown"
           role="menu"
         >
-
           {NAV_LINKS.map((link) => {
             const isActive =
               link.href === "/"
