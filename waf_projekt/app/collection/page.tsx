@@ -3,6 +3,7 @@ import { useCollection } from "../../context/CollectionContext";
 import Link from "next/link";
 import { useState } from "react";
 import { sellCard } from "@/app/actions/points";
+import WavesBackground from "../components/WavesBackground";
 import "../(auth)/auth.css";
 
 export default function CollectionPage() {
@@ -58,8 +59,10 @@ export default function CollectionPage() {
     });
 
   return (
-    <div className="main-content">
-      <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <>
+      <WavesBackground linecolor="#800000" />
+      <div className="main-content">
+        <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h1>My Collection {isLoggedIn && `(${uniqueDrivers.length}/22 drivers · ${collection.length} cards)`}</h1>
         {isLoggedIn && (
           <Link
@@ -76,7 +79,7 @@ export default function CollectionPage() {
         <div className="auth-container" style={{ minHeight: 'auto', padding: '60px 20px' }}>
           <div className="auth-card" style={{ textAlign: 'center' }}>
             <div className="auth-header" style={{ marginBottom: '24px' }}>
-              <h2 className="auth-title">Your Garage is Locked</h2>
+              <h2 className="auth-title">Your Collection is Locked</h2>
               <p className="auth-subtitle" style={{ marginTop: '12px' }}>
                 Sign in to collect, view, and manage your exclusive F1 driver cards.
               </p>
@@ -94,7 +97,7 @@ export default function CollectionPage() {
         </div>
       ) : collection.length === 0 ? (
         <div className="coming-soon">
-          <div className="coming-soon-icon">🃏</div>
+
           <h2>No cards yet</h2>
           <p>Open packs to start building your F1 driver collection!</p>
           <Link
@@ -131,5 +134,6 @@ export default function CollectionPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

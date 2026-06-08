@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import PackOpener from "../components/PackOpener";
 import Link from "next/link";
 import { auth } from "@/auth";
+import WavesBackground from "../components/WavesBackground";
 import "../(auth)/auth.css";
 
 export const metadata: Metadata = {
@@ -14,8 +15,10 @@ export default async function PacksPage() {
   const isLoggedIn = !!session?.user;
 
   return (
-    <div className="main-content">
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <>
+      <WavesBackground linecolor="#800000" />
+      <div className="main-content">
+        <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1>Card Packs</h1>
         {isLoggedIn && (
           <Link 
@@ -52,5 +55,6 @@ export default async function PacksPage() {
         <PackOpener />
       )}
     </div>
+    </>
   );
 }
