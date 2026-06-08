@@ -3,6 +3,7 @@ import { useCollection } from "../../context/CollectionContext";
 import Link from "next/link";
 import { useState } from "react";
 import { sellCard } from "@/app/actions/points";
+import Image from "next/image";
 import WavesBackground from "../components/WavesBackground";
 import "../(auth)/auth.css";
 
@@ -120,7 +121,7 @@ export default function CollectionPage() {
                   onClick={() => handleSell(card.driverId)}
                   disabled={sellingId === card.driverId}
                 >
-                  {sellingId === card.driverId ? "SELLING..." : `SELL FOR ${getSellPrice(card.rarity)} 🪙`}
+                  {sellingId === card.driverId ? "SELLING..." : <>SELL FOR {getSellPrice(card.rarity)} <Image src="/coin.svg" alt="Coin" width={14} height={14} style={{ display: 'inline', verticalAlign: 'middle', marginLeft: '4px' }} /></>}
                 </button>
               </div>
 

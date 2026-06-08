@@ -205,44 +205,6 @@ export default function DriverProfileClient({ drivers, initialDriverId }: Props)
     router.push(`/driver/${driverId}`);
   }, [drivers, router]);
 
-
-
-  // Keyboard navigation
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!isOpen) {
-      if (e.key === "ArrowDown" || e.key === "Enter") {
-        setIsOpen(true);
-        e.preventDefault();
-      }
-      return;
-    }
-
-    switch (e.key) {
-      case "ArrowDown":
-        e.preventDefault();
-        setHighlightedIndex((prev) =>
-          prev < filteredDrivers.length - 1 ? prev + 1 : 0
-        );
-        break;
-      case "ArrowUp":
-        e.preventDefault();
-        setHighlightedIndex((prev) =>
-          prev > 0 ? prev - 1 : filteredDrivers.length - 1
-        );
-        break;
-      case "Enter":
-        e.preventDefault();
-        if (highlightedIndex >= 0 && filteredDrivers[highlightedIndex]) {
-          selectDriver(filteredDrivers[highlightedIndex].driverId);
-        }
-        break;
-      case "Escape":
-        setIsOpen(false);
-        setHighlightedIndex(-1);
-        break;
-    }
-  };
-
   // Fetch driver data — responds to both selectedId AND selectedSeason
   useEffect(() => {
     if (!selectedId) return;
@@ -352,10 +314,8 @@ export default function DriverProfileClient({ drivers, initialDriverId }: Props)
             }}
             onFocus={() => {
               setIsOpen(true);
-              // Select all text on focus for easy re-search
               inputRef.current?.select();
             }}
-            onKeyDown={handleKeyDown}
             aria-label="Search drivers"
             aria-expanded={isOpen}
             aria-autocomplete="list"
@@ -582,7 +542,7 @@ export default function DriverProfileClient({ drivers, initialDriverId }: Props)
                     <tr
                       key={index}
                       className="driver-result-row-clickable"
-                      onClick={() => {}}
+                      onClick={() => { }}
                     >
                       <td>{race.round}</td>
                       <td>

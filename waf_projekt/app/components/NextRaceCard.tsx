@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Countdown from "./Countdown";
 import type { Race, OpenF1Meeting } from "@/app/lib/types";
 
@@ -9,22 +10,28 @@ interface NextRaceCardProps {
 }
 
 export default function NextRaceCard({ race, meeting }: NextRaceCardProps) {
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const raceDateTime = `${race.date}T${race.time}`;
 
   // Format the date nicely
   const dateObj = new Date(raceDateTime);
-  const formattedDate = dateObj.toLocaleDateString("en-US", {
+  const formattedDate = mounted ? dateObj.toLocaleDateString("en-US", {
     day: "numeric",
     month: "long",
     year: "numeric",
-  });
+  }) : "";
 
   // Format race start time in local timezone
-  const formattedTime = dateObj.toLocaleTimeString("en-US", {
+  const formattedTime = mounted ? dateObj.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     timeZoneName: "short",
-  });
+  }) : "";
 
   // Build track image path using the same pattern as results cards
   const trackImageSlug = race.Circuit.Location.locality

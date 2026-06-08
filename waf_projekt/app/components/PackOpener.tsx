@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useCollection } from "../../context/CollectionContext";
 import { openPack } from "@/app/actions/points";
+import Image from "next/image";
 
 const PACK_COST = 50;
 
@@ -39,7 +40,9 @@ export default function PackOpener() {
     <div className="pack-opener-container">
       {/* Coin balance display */}
       <div className="pack-balance-display">
-        <span className="pack-balance-icon">🪙</span>
+        <span className="pack-balance-icon">
+          <Image src="/coin.svg" alt="Coin" width={16} height={16} />
+        </span>
         <span className="pack-balance-amount">{coins.toLocaleString()}</span>
         <span className="pack-balance-label">F1 COINS</span>
       </div>
@@ -68,9 +71,9 @@ export default function PackOpener() {
             id="open-pack-btn"
           >
             {canAfford ? (
-              <>OPEN PACK <span className="pack-cost">🪙 {PACK_COST}</span></>
+              <>OPEN PACK <span className="pack-cost"><Image src="/coin.svg" alt="Coin" width={16} height={16} style={{ display: 'inline' }} /> {PACK_COST}</span></>
             ) : (
-              <>NOT ENOUGH COINS <span className="pack-cost">🪙 {PACK_COST}</span></>
+              <>NOT ENOUGH COINS <span className="pack-cost"><Image src="/coin.svg" alt="Coin" width={16} height={16} style={{ display: 'inline' }} /> {PACK_COST}</span></>
             )}
           </button>
         </div>

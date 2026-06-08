@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getUserBalance } from "@/app/actions/points";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function CoinBalance() {
   const [coins, setCoins] = useState<number | null>(null);
@@ -32,7 +33,9 @@ export default function CoinBalance() {
 
   return (
     <Link href="/packs" className="coin-balance-badge" id="coin-balance">
-      <span className="coin-icon">🪙</span>
+      <span className="coin-icon">
+        <Image src="/coin.svg" alt="Coin" width={18} height={18} />
+      </span>
       <span className={`coin-amount${animate ? " coin-pop" : ""}`}>
         {coins.toLocaleString()}
       </span>

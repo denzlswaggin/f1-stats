@@ -14,7 +14,6 @@ export default function ComparePage() {
         <h1>Compare Drivers</h1>
       </div>
       <div className="coming-soon">
-        <div className="coming-soon-icon">⚡</div>
         <h2>Coming Soon</h2>
         <p>
           Head-to-head driver comparisons with interactive charts and data.

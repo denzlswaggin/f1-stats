@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { claimDailyLogin, claimPageView, claimDriverView } from "@/app/actions/points";
+import Image from "next/image";
 
 const TRACKED_PAGES: Record<string, string> = {
   "/results": "results",
@@ -87,7 +88,9 @@ export default function PointsTracker({ isLoggedIn }: { isLoggedIn: boolean }) {
     <>
       {toasts.map((toast) => (
         <div key={toast.id} className="coin-toast" aria-live="polite">
-          <span className="coin-toast-icon">🪙</span>
+          <span className="coin-toast-icon">
+            <Image src="/coin.svg" alt="Coin" width={16} height={16} />
+          </span>
           <span className="coin-toast-amount">+{toast.amount}</span>
           <span className="coin-toast-reason">{toast.reason}</span>
         </div>
