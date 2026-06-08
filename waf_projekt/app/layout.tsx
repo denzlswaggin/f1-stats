@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import { cn } from "@/lib/utils";
 import { CollectionProvider } from "@/context/CollectionContext";
 import { auth } from "@/auth";
+import PointsTracker from "./components/PointsTracker";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -38,7 +39,8 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <CollectionProvider>
+        <CollectionProvider isLoggedIn={!!session?.user}>
+          <PointsTracker isLoggedIn={!!session?.user} />
           <div className="app-container" style={{ position: 'relative', zIndex: 1 }}>
             <Navbar user={session?.user} />
             <main className="main-content">{children}</main>

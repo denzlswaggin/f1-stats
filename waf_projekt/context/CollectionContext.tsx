@@ -1,17 +1,67 @@
 "use client";
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import { getUserCollection, getUserBalance } from "@/app/actions/points";
 
-const CollectionContext = createContext<any>(null);
+interface Card {
+  id: string;
+  driverId: string;
+  name: string;
+  image: string;
+  rarity: string;
+  createdAt: Date;
+}
 
-export function CollectionProvider({ children }: { children: ReactNode }) {
-  const [collection, setCollection] = useState<{name: string, image: string}[]>([]);
+interface CollectionContextValue {
+  collection: Card[];
+  coins: number;
+  refreshCollection: () => Promise<void>;
+  refreshCoins: () => Promise<void>;
+}
 
-  const addToCollection = (card: { name: string; image: string }) => {
-    setCollection((prev) => [...prev, card]);
-  };
+const CollectionContext = createContext<CollectionContextValue | null>(null);
+
+export function CollectionProvider({
+  children,
+  isLoggedIn,
+}: {
+  children: ReactNode;
+  isLoggedIn: boolean;
+}) {
+  const [collection, setCollection] = useState<Card[]>([]);
+  const [coins, setCoins] = useState(0);
+
+  const refreshCollection = useCallback(async () => {
+    if (!isLoggedIn) return;
+    const cards = await getUserCollection();
+    setCollection(cards);
+  }, [isLoggedIn]);
+
+  const refreshCoins = useCallback(async () => {
+    if (!isLoggedIn) return;
+    const balance = await getUserBalance();
+    setCoins(balance);
+  }, [isLoggedIn]);
+
+  // Initial load
+  useEffect(() => {
+    if (isLoggedIn) {
+      refreshCollection();
+      refreshCoins();
+    } else {
+      setCollection([]);
+      setCoins(0);
+    }
+  }, [isLoggedIn, refreshCollection, refreshCoins]);
+
+  // Listen for coin updates from PointsTracker
+  useEffect(() => {
+    const handler = () => refreshCoins();
+    window.addEventListener("coins-updated", handler);
+    return () => window.removeEventListener("coins-updated", handler);
+  }, [refreshCoins]);
 
   return (
-    <CollectionContext.Provider value={{ collection, addToCollection }}>
+    <CollectionContext.Provider value={{ collection, coins, refreshCollection, refreshCoins }}>
       {children}
     </CollectionContext.Provider>
   );
@@ -19,6 +69,6 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
 
 export const useCollection = () => {
   const context = useContext(CollectionContext);
-  if (!context) return { collection: [], addToCollection: () => {} };
+  if (!context) return { collection: [], coins: 0, refreshCollection: async () => {}, refreshCoins: async () => {} };
   return context;
 };

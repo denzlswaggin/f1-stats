@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 
 import { logoutUser } from "@/app/actions/auth";
+import CoinBalance from "./CoinBalance";
 
 const NAV_LINKS = [
   { href: "/", label: "Dashboard" },
@@ -112,6 +113,7 @@ export default function Navbar({ user }: { user?: { name?: string | null; email?
       <div className="navbar-right">
         {user ? (
           <div className="navbar-user" style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <CoinBalance />
             <span className="navbar-brand-text" aria-hidden="true">{user.name || user.email || "F1 Stats Hub"}</span>
             <button
               className="navbar-auth-btn"

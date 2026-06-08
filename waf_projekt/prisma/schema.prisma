@@ -13,8 +13,12 @@ model User {
   password      String?
   emailVerified DateTime?
   image         String?
+  coins         Int             @default(100)
+  isAdmin       Boolean         @default(false)
   accounts      Account[]
   sessions      Session[]
+  collection    CollectedCard[]
+  pointsLog     PointsLog[]
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 }
@@ -52,4 +56,28 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model CollectedCard {
+  id        String   @id @default(cuid())
+  userId    String
+  driverId  String
+  name      String
+  image     String
+  rarity    String   @default("common")
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model PointsLog {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+  reason    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, reason, createdAt])
 }
