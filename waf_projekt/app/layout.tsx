@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
-import WavesBackground from "./components/WavesBackground";
 import { cn } from "@/lib/utils";
-import { CollectionProvider } from "@/context/CollectionContext"; // Důležitý import
+import { CollectionProvider } from "@/context/CollectionContext";
+import { auth } from "@/auth";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -38,10 +38,9 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        { }
         <CollectionProvider>
           <div className="app-container" style={{ position: 'relative', zIndex: 1 }}>
-            <Navbar />
+            <Navbar user={session?.user} />
             <main className="main-content">{children}</main>
           </div>
         </CollectionProvider>
