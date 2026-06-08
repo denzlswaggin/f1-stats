@@ -55,7 +55,7 @@ async function hasClaimedToday(userId: string, reason: string): Promise<boolean>
   return !!existing;
 }
 
-/** Award coins to user + log the transaction */
+/* Award coins to user + log the transaction */
 async function awardCoins(userId: string, amount: number, reason: string) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -182,11 +182,11 @@ export async function openPack(): Promise<{
   if (roll < 2) {
     selectedRarity = "legendary"; // 2% chance
   } else if (roll < 10) {
-    selectedRarity = "epic";      // 8% chance (2% - 10%)
+    selectedRarity = "epic";      // 8% chance 
   } else if (roll < 35) {
-    selectedRarity = "rare";      // 25% chance (10% - 35%)
+    selectedRarity = "rare";      // 25% chance 
   } else {
-    selectedRarity = "common";    // 65% chance (35% - 100%)
+    selectedRarity = "common";    // 65% chance 
   }
 
   // Filter pool by selected rarity

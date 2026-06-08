@@ -201,6 +201,7 @@ export async function getDriverCareerStats(driverId: string) {
   ];
 
   try {
+
     // Delay between requests to avoid 429 error
 
     const r1 = await fetchJson<any>(urls[0]);

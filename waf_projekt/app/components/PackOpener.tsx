@@ -25,7 +25,6 @@ export default function PackOpener() {
 
     if (result.success && result.card) {
       setCard(result.card);
-      // Refresh both coins and collection from DB
       refreshCoins();
       refreshCollection();
       window.dispatchEvent(new CustomEvent("coins-updated"));

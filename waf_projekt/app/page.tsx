@@ -11,7 +11,7 @@ import NextRaceCard from "./components/NextRaceCard";
 import StandingsTable from "./components/StandingsTable";
 
 export default async function DashboardPage() {
-  // Fetch all data in parallel for performance
+  // Fetch all data 
   const [driverStandings, constructorStandings, nextRace, seasonInfo, meetings] =
     await Promise.all([
       getDriverStandings(5),
@@ -29,17 +29,14 @@ export default async function DashboardPage() {
   return (
     <>
       <WavesBackground />
-      {/* Dashboard Header */}
       <div className="page-header" id="dashboard-header">
         <h1>Dashboard – Season Overview</h1>
       </div>
 
-      {/* Next Race Card with Countdown */}
       {nextRace && (
         <NextRaceCard race={nextRace} meeting={matchingMeeting} />
       )}
 
-      {/* Season Info */}
       <div className="season-info" id="season-info">
         <span className="dot" />
         <span>
@@ -48,7 +45,6 @@ export default async function DashboardPage() {
         </span>
       </div>
 
-      {/* Standings Grid */}
       <div className="standings-grid">
         <StandingsTable
           type="drivers"

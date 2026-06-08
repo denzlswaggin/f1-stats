@@ -43,7 +43,6 @@ export function CollectionProvider({
     setCoins(balance);
   }, [isLoggedIn]);
 
-  // Initial load
   useEffect(() => {
     if (isLoggedIn) {
       refreshCollection();
@@ -70,6 +69,6 @@ export function CollectionProvider({
 
 export const useCollection = () => {
   const context = useContext(CollectionContext);
-  if (!context) return { collection: [], coins: 0, isLoggedIn: false, refreshCollection: async () => {}, refreshCoins: async () => {} };
+  if (!context) return { collection: [], coins: 0, isLoggedIn: false, refreshCollection: async () => { }, refreshCoins: async () => { } };
   return context;
 };

@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { claimDailyLogin, claimPageView, claimDriverView } from "@/app/actions/points";
 
-// Pages that award view points
 const TRACKED_PAGES: Record<string, string> = {
   "/results": "results",
   "/driver-standings": "driver-standings",
@@ -53,7 +52,6 @@ export default function PointsTracker({ isLoggedIn }: { isLoggedIn: boolean }) {
     });
   }, [isLoggedIn, showToast, notifyBalanceChange]);
 
-  // Page view tracking
   useEffect(() => {
     if (!isLoggedIn) return;
 
