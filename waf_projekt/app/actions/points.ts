@@ -231,16 +231,6 @@ export async function openPack(): Promise<{
   };
 }
 
-export async function getPointsHistory(limit = 20) {
-  const userId = await getAuthUserId();
-  if (!userId) return [];
-
-  return prisma.pointsLog.findMany({
-    where: { userId },
-    orderBy: { createdAt: "desc" },
-    take: limit,
-  });
-}
 
 export async function sellCard(driverId: string): Promise<{ success: boolean; error?: string; coinsEarned?: number }> {
   const userId = await getAuthUserId();
