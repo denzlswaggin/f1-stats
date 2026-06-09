@@ -534,6 +534,94 @@
   margin: 0;
 }
 
+/* ─── Season Selector ─── */
+.season-selector {
+  position: relative;
+}
+
+.season-selector-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-secondary);
+  color: var(--f1-red);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.03em;
+}
+
+.season-selector-btn:hover {
+  border-color: var(--f1-red);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--f1-red) 25%, transparent);
+}
+
+.season-chevron {
+  transition: transform 0.25s ease;
+}
+
+.season-chevron.open {
+  transform: rotate(180deg);
+}
+
+.season-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 120px;
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 60;
+  animation: compareSearchDropIn 0.15s ease-out;
+}
+
+.season-dropdown::-webkit-scrollbar {
+  width: 5px;
+}
+
+.season-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.season-dropdown::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+.season-dropdown-item {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.12s ease;
+}
+
+.season-dropdown-item:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.season-dropdown-item.active {
+  background: var(--f1-red);
+  color: white;
+}
+
 .compare-season-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -821,6 +909,12 @@
 
   .compare-hero-family {
     font-size: 18px;
+  }
+
+  .compare-season-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .compare-season-cards {
