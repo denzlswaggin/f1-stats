@@ -15,7 +15,7 @@ import type {
 const JOLPICA_BASE = "https://api.jolpi.ca/ergast/f1";
 const OPENF1_BASE = "https://api.openf1.org/v1";
 
-export class ApiError extends Error {
+class ApiError extends Error {
   constructor(
     message: string,
     public status?: number

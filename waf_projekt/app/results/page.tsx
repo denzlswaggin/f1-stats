@@ -19,18 +19,6 @@ export default async function ResultsPage() {
   const race = racesWithResults[0];
   const season = race?.season || new Date().getFullYear().toString();
 
-  // Find last completed round for total rounds calculation
-  const now = new Date();
-  let lastCompletedRound = allRounds.length;
-  for (let i = allRounds.length - 1; i >= 0; i--) {
-    const raceDate = new Date(
-      `${allRounds[i].date}T${allRounds[i].time || "14:00:00Z"}`
-    );
-    if (raceDate < now) {
-      lastCompletedRound = parseInt(allRounds[i].round);
-      break;
-    }
-  }
 
   const initialResults = race
     ? race.Results.map((r) => ({
