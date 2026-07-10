@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { getDriverSeasonResults, getDriverCareerStats } from "../lib/api";
 import WavesBackground from "../components/WavesBackground";
@@ -409,7 +410,7 @@ export default function DriverProfileClient({ drivers, initialDriverId }: Props)
 
                   <div className="driver-hero-meta">
                     <span className="driver-hero-meta-item">
-                      <img
+                      <Image width={500} height={500}
                         src={`https://flagcdn.com/20x15/${flagCode}.png`}
                         alt={driver.nationality}
                         className="driver-hero-flag"
@@ -426,7 +427,7 @@ export default function DriverProfileClient({ drivers, initialDriverId }: Props)
                 {/* Right: driver photo */}
                 <div className="driver-hero-photo">
                   {!photoError && getDriverPhoto(driver.driverId) ? (
-                    <img
+                    <Image width={500} height={500}
                       src={getDriverPhoto(driver.driverId)}
                       alt={`${driver.givenName} ${driver.familyName}`}
                       className="driver-hero-photo-img"
@@ -552,7 +553,7 @@ export default function DriverProfileClient({ drivers, initialDriverId }: Props)
                           onClick={(e) => e.stopPropagation()}
                         >
                           <div className="gp-cell">
-                            <img
+                            <Image width={500} height={500}
                               src={race.flagUrl}
                               alt="Country flag"
                               className="gp-flag"

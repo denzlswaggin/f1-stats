@@ -52,7 +52,7 @@ export default function PackOpener() {
         <div className="pack-card-wrapper">
           <div className="pack-card" style={{ background: 'transparent', border: 'none', position: 'relative' }}>
             <div className="pack-card-glow" />
-            <img
+            <Image width={500} height={500}
               src="/pack template.png"
               alt="Signature Pack"
               style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'contain', zIndex: 1, filter: 'blur(0.5px)' }}
@@ -91,7 +91,7 @@ export default function PackOpener() {
       {card && (
         <div className="pack-reveal">
           <div className="pack-revealed-card">
-            <img src={card.image} alt={card.name} className={`pack-card-image rarity-${card.rarity}`} />
+            <Image width={500} height={500} src={card.image} alt={card.name} className={`pack-card-image rarity-${card.rarity}`} />
           </div>
           <button onClick={() => setCard(null)} className="pack-close-btn" id="close-card-btn">
             CLOSE

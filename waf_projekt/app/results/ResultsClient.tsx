@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 
@@ -576,7 +577,7 @@ function UpcomingRaceCard({
 
   return (
     <div className="upcoming-race-card" id="upcoming-race">
-      <img
+      <Image width={500} height={500}
         src={`/tracks/${race.locality.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "")}.jpg`}
         alt={race.locality}
         className="upcoming-race-bg"
@@ -597,15 +598,15 @@ function UpcomingRaceCard({
 
       <div className="upcoming-race-meta">
         <div className="upcoming-race-meta-item">
-          <img src="/pin.png" alt="Circuit" width={14} height={14} className="upcoming-meta-icon" />
+          <Image src="/pin.png" alt="Circuit" width={14} height={14} className="upcoming-meta-icon" />
           <span>{race.circuitName}</span>
         </div>
         <div className="upcoming-race-meta-item">
-          <img src="/location.png" alt="Location" width={14} height={14} className="upcoming-meta-icon" />
+          <Image src="/location.png" alt="Location" width={14} height={14} className="upcoming-meta-icon" />
           <span>{race.locality}, {race.country}</span>
         </div>
         <div className="upcoming-race-meta-item">
-          <img src="/calendar.png" alt="Date and Time" width={14} height={14} className="upcoming-meta-icon" />
+          <Image src="/calendar.png" alt="Date and Time" width={14} height={14} className="upcoming-meta-icon" />
           <span>{formattedDate} · {formattedTime}</span>
         </div>
       </div>

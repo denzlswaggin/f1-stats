@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import Countdown from "./Countdown";
 import type { Race, OpenF1Meeting } from "@/app/lib/types";
@@ -42,7 +43,7 @@ export default function NextRaceCard({ race, meeting }: NextRaceCardProps) {
 
   return (
     <div className="next-race-card" id="next-race-card">
-      <img
+      <Image width={500} height={500}
         src={`/tracks/${trackImageSlug}.jpg`}
         alt={race.Circuit.Location.locality}
         className="next-race-bg"
@@ -55,7 +56,7 @@ export default function NextRaceCard({ race, meeting }: NextRaceCardProps) {
       {meeting?.country_flag && (
         <div className="next-race-flag">
           {/* Using country flag from OpenF1 API */}
-          <img
+          <Image
             src={meeting.country_flag}
             alt={`${race.Circuit.Location.country} flag`}
             width={32}

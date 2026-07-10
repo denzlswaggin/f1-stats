@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -611,7 +612,7 @@ function CompareContent({ drivers }: Props) {
               </h2>
               <div className="compare-hero-meta">
                 <span className="compare-hero-meta-item">
-                  <img src={`https://flagcdn.com/16x12/${nationalityToCode[driverA.nationality] || "un"}.png`} alt={driverA.nationality} className="compare-hero-flag" />
+                  <Image width={500} height={500} src={`https://flagcdn.com/16x12/${nationalityToCode[driverA.nationality] || "un"}.png`} alt={driverA.nationality} className="compare-hero-flag" />
                   {driverA.nationality}
                 </span>
                 <span className="compare-hero-meta-sep">|</span>
@@ -620,7 +621,7 @@ function CompareContent({ drivers }: Props) {
             </div>
             <div className="compare-hero-photo">
               {!photoErrorA && getDriverPhoto(driverA.driverId) ? (
-                <img src={getDriverPhoto(driverA.driverId)} alt={driverA.familyName} className="compare-hero-photo-img" onError={() => setPhotoErrorA(true)} />
+                <Image width={500} height={500} src={getDriverPhoto(driverA.driverId)} alt={driverA.familyName} className="compare-hero-photo-img" onError={() => setPhotoErrorA(true)} />
               ) : (
                 <div className="compare-hero-photo-fallback">
                   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -658,7 +659,7 @@ function CompareContent({ drivers }: Props) {
               </h2>
               <div className="compare-hero-meta">
                 <span className="compare-hero-meta-item">
-                  <img src={`https://flagcdn.com/16x12/${nationalityToCode[driverB.nationality] || "un"}.png`} alt={driverB.nationality} className="compare-hero-flag" />
+                  <Image width={500} height={500} src={`https://flagcdn.com/16x12/${nationalityToCode[driverB.nationality] || "un"}.png`} alt={driverB.nationality} className="compare-hero-flag" />
                   {driverB.nationality}
                 </span>
                 <span className="compare-hero-meta-sep">|</span>
@@ -667,7 +668,7 @@ function CompareContent({ drivers }: Props) {
             </div>
             <div className="compare-hero-photo">
               {!photoErrorB && getDriverPhoto(driverB.driverId) ? (
-                <img src={getDriverPhoto(driverB.driverId)} alt={driverB.familyName} className="compare-hero-photo-img" onError={() => setPhotoErrorB(true)} />
+                <Image width={500} height={500} src={getDriverPhoto(driverB.driverId)} alt={driverB.familyName} className="compare-hero-photo-img" onError={() => setPhotoErrorB(true)} />
               ) : (
                 <div className="compare-hero-photo-fallback">
                   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -877,7 +878,7 @@ function CompareContent({ drivers }: Props) {
                           <td className="compare-cell-round">{row.round.padStart(2, "0")}</td>
                           <td>
                             <div className="gp-cell">
-                              <img src={row.flagUrl} alt="Country flag" className="gp-flag" loading="lazy" />
+                              <Image width={500} height={500} src={row.flagUrl} alt="Country flag" className="gp-flag" loading="lazy" />
                               <span className="compare-cell-gp">{row.gpName}</span>
                             </div>
                           </td>

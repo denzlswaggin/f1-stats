@@ -14,6 +14,13 @@ const getSellPrice = (rarity: string) => {
   return 25;
 };
 
+const rarityOrder: Record<string, number> = {
+  legendary: 4,
+  epic: 3,
+  rare: 2,
+  common: 1,
+};
+
 export default function CollectionPage() {
   const { collection, coins, isLoggedIn, refreshCollection, refreshCoins } = useCollection();
   const [sellingId, setSellingId] = useState<string | null>(null);
@@ -40,12 +47,7 @@ export default function CollectionPage() {
     return acc;
   }, {} as Record<string, number>);
 
-  const rarityOrder: Record<string, number> = {
-    legendary: 4,
-    epic: 3,
-    rare: 2,
-    common: 1,
-  };
+
 
   // Unique drivers for display
   const uniqueDrivers = collection
@@ -69,7 +71,7 @@ export default function CollectionPage() {
           <Link
             href="/packs"
             className="navbar-logo"
-            style={{ fontSize: "10px", padding: "6px 12px", textDecoration: "none" }}
+            style={{ fontSize: "12px", padding: "6px 12px", textDecoration: "none" }}
           >
             BACK TO PACKS
           </Link>
@@ -113,7 +115,7 @@ export default function CollectionPage() {
         <div className="collection-grid">
           {uniqueDrivers.map((card) => (
             <div key={card.driverId} className="collection-card group">
-              <img src={card.image} alt={card.name} className={`collection-card-image rarity-${card.rarity}`} />
+              <Image width={500} height={500} src={card.image} alt={card.name} className={`collection-card-image rarity-${card.rarity}`} />
 
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center backdrop-blur-[2px] z-10">
                 <button

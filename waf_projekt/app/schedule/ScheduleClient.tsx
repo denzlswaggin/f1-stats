@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -190,7 +191,7 @@ export default function ScheduleClient({ initialRaces, initialSeason }: Props) {
                     <div className="schedule-race-details">
                       <span>{formatDate(race.date)}</span>
                       <span className="separator">–</span>
-                      <img
+                      <Image width={500} height={500}
                         src={flagUrl}
                         alt={race.country}
                         className="schedule-race-flag"

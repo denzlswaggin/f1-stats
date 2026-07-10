@@ -24,7 +24,7 @@ export default async function PacksPage() {
           <Link 
             href="/collection" 
             className="navbar-logo" 
-            style={{ fontSize: '10px', padding: '6px 12px', textDecoration: 'none' }}
+            style={{ fontSize: '12px', padding: '6px 12px', textDecoration: 'none' }}
           >
             VIEW COLLECTION
           </Link>
