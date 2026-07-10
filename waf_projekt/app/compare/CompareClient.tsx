@@ -92,6 +92,20 @@ interface Props {
 const CURRENT_YEAR = new Date().getFullYear();
 const SEASON_OPTIONS = Array.from({ length: CURRENT_YEAR - 1999 }, (_, i) => CURRENT_YEAR - i);
 
+// Highlight matches
+const highlightMatch = (text: string, query: string) => {
+  if (!query.trim()) return text;
+  const idx = text.toLowerCase().indexOf(query.toLowerCase());
+  if (idx === -1) return text;
+  return (
+    <>
+      {text.slice(0, idx)}
+      <span className="search-highlight" style={{ color: "var(--f1-red)", fontWeight: 700 }}>{text.slice(idx, idx + query.length)}</span>
+      {text.slice(idx + query.length)}
+    </>
+  );
+};
+
 function CompareContent({ drivers }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -256,19 +270,6 @@ function CompareContent({ drivers }: Props) {
       return fullName.includes(q) || d.code.toLowerCase().includes(q) || d.team.toLowerCase().includes(q) || d.permanentNumber.includes(q);
     });
 
-  // Highlight matches
-  const highlightMatch = (text: string, query: string) => {
-    if (!query.trim()) return text;
-    const idx = text.toLowerCase().indexOf(query.toLowerCase());
-    if (idx === -1) return text;
-    return (
-      <>
-        {text.slice(0, idx)}
-        <span className="search-highlight" style={{ color: "var(--f1-red)", fontWeight: 700 }}>{text.slice(idx, idx + query.length)}</span>
-        {text.slice(idx + query.length)}
-      </>
-    );
-  };
 
   // Select driver handlers
   const selectDriverA = (id: string) => {

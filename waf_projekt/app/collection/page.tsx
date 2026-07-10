@@ -7,16 +7,16 @@ import Image from "next/image";
 import WavesBackground from "../components/WavesBackground";
 import "../(auth)/auth.css";
 
+const getSellPrice = (rarity: string) => {
+  if (rarity === "legendary") return 250;
+  if (rarity === "epic") return 100;
+  if (rarity === "rare") return 50;
+  return 25;
+};
+
 export default function CollectionPage() {
   const { collection, coins, isLoggedIn, refreshCollection, refreshCoins } = useCollection();
   const [sellingId, setSellingId] = useState<string | null>(null);
-
-  const getSellPrice = (rarity: string) => {
-    if (rarity === "legendary") return 250;
-    if (rarity === "epic") return 100;
-    if (rarity === "rare") return 50;
-    return 25;
-  };
 
   const handleSell = async (driverId: string) => {
     if (sellingId) return;

@@ -6,10 +6,15 @@ import Link from "next/link";
 import { loginUser } from "@/app/actions/auth";
 import "../auth.css";
 
+const safeCallbackUrl = (url: string | null) => {
+  if (!url) return "/";
+  return url.startsWith("/") ? url : "/";
+};
+
 function LoginForm() {
   const searchParams = useSearchParams();
   const registered = searchParams.get("registered");
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = safeCallbackUrl(searchParams.get("callbackUrl"));
   
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

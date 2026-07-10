@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import { signIn } from "@/auth";
+import { signIn, auth, signOut } from "@/auth";
 import { AuthError } from "next-auth";
 
 export async function registerUser(formData: FormData) {
@@ -70,5 +70,7 @@ export async function loginUser(formData: FormData, callbackUrl?: string) {
 }
 
 export async function logoutUser() {
-  await import("@/auth").then((m) => m.signOut());
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+  await signOut();
 }
