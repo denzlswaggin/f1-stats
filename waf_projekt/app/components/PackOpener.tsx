@@ -65,6 +65,7 @@ export default function PackOpener() {
           </div>
 
           <button
+            type="button"
             onClick={handleOpenPack}
             disabled={!canAfford}
             className={`pack-open-btn${!canAfford ? " disabled" : ""}`}
@@ -93,7 +94,7 @@ export default function PackOpener() {
           <div className="pack-revealed-card">
             <Image width={500} height={500} src={card.image} alt={card.name} className={`pack-card-image rarity-${card.rarity}`} />
           </div>
-          <button onClick={() => setCard(null)} className="pack-close-btn" id="close-card-btn">
+          <button type="button" onClick={() => setCard(null)} className="pack-close-btn" id="close-card-btn">
             CLOSE
           </button>
         </div>
@@ -103,7 +104,7 @@ export default function PackOpener() {
       {error && (
         <div className="pack-error">
           <span>{error}</span>
-          <button onClick={() => setError(null)} className="pack-close-btn">
+          <button type="button" onClick={() => setError(null)} className="pack-close-btn">
             OK
           </button>
         </div>

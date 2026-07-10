@@ -418,71 +418,7 @@ export default function ResultsClient({
           </div>
         ) : (
           <>
-            <div className="results-table-container" id="results-table">
-              <table className="results-table">
-                <thead>
-                  <tr>
-                    <th>Pos</th>
-                    <th>Driver</th>
-                    <th>Team</th>
-                    <th className="results-col-time">Time / Gap</th>
-                    <th>Pts</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {results.map((result) => {
-                    const pos = parseInt(result.position);
-                    const isRetired = result.positionText === "R" || result.status === "Retired";
-                    const isDNF = isRetired || result.status === "Disqualified";
-                    const isWinner = pos === 1;
-                    const pts = parseInt(result.points);
-
-                    let rowClass = "";
-                    if (pos === 1) rowClass = "results-row-p1";
-                    else if (pos === 2) rowClass = "results-row-p2";
-                    else if (pos === 3) rowClass = "results-row-p3";
-
-                    let timeDisplay = result.time;
-                    if (!timeDisplay && isDNF) {
-                      timeDisplay = result.status === "Retired" ? "DNF" : result.status;
-                    } else if (!timeDisplay) {
-                      timeDisplay = result.status || "—";
-                    }
-
-                    return (
-                      <tr key={result.position} className={rowClass}>
-                        <td className="results-pos">
-                          {isRetired ? result.positionText : result.position}
-                        </td>
-                        <td>
-                          {/* Driver name → link to driver profile */}
-                          <Link
-                            href={`/driver/${result.driverId}`}
-                            className="results-driver-link"
-                          >
-                            <span className="results-driver-name">
-                              {result.driverName}
-                              <span className="results-driver-code">{result.driverCode}</span>
-                            </span>
-                          </Link>
-                        </td>
-                        <td className="results-team">{result.team}</td>
-                        <td>
-                          <span
-                            className={`results-time${isWinner ? " results-winner-time" : ""}${isDNF ? " results-dnf" : ""}`}
-                          >
-                            {timeDisplay}
-                          </span>
-                        </td>
-                        <td className={`results-pts${pts === 0 ? " results-no-points" : ""}`}>
-                          {result.points}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+            <ResultsTable results={results} />
 
             {/* Race info */}
             <div className="results-race-info">
@@ -528,6 +464,77 @@ export default function ResultsClient({
         </button>
       </div>
     </>
+  );
+}
+
+/* ─── Results Table Subcomponent ─── */
+
+function ResultsTable({ results }: { results: ResultData[] }) {
+  return (
+    <div className="results-table-container" id="results-table">
+      <table className="results-table">
+        <thead>
+          <tr>
+            <th>Pos</th>
+            <th>Driver</th>
+            <th>Team</th>
+            <th className="results-col-time">Time / Gap</th>
+            <th>Pts</th>
+          </tr>
+        </thead>
+        <tbody>
+          {results.map((result) => {
+            const pos = parseInt(result.position);
+            const isRetired = result.positionText === "R" || result.status === "Retired";
+            const isDNF = isRetired || result.status === "Disqualified";
+            const isWinner = pos === 1;
+            const pts = parseInt(result.points);
+
+            let rowClass = "";
+            if (pos === 1) rowClass = "results-row-p1";
+            else if (pos === 2) rowClass = "results-row-p2";
+            else if (pos === 3) rowClass = "results-row-p3";
+
+            let timeDisplay = result.time;
+            if (!timeDisplay && isDNF) {
+              timeDisplay = result.status === "Retired" ? "DNF" : result.status;
+            } else if (!timeDisplay) {
+              timeDisplay = result.status || "—";
+            }
+
+            return (
+              <tr key={result.position} className={rowClass}>
+                <td className="results-pos">
+                  {isRetired ? result.positionText : result.position}
+                </td>
+                <td>
+                  <Link
+                    href={`/driver/${result.driverId}`}
+                    className="results-driver-link"
+                  >
+                    <span className="results-driver-name">
+                      {result.driverName}
+                      <span className="results-driver-code">{result.driverCode}</span>
+                    </span>
+                  </Link>
+                </td>
+                <td className="results-team">{result.team}</td>
+                <td>
+                  <span
+                    className={`results-time${isWinner ? " results-winner-time" : ""}${isDNF ? " results-dnf" : ""}`}
+                  >
+                    {timeDisplay}
+                  </span>
+                </td>
+                <td className={`results-pts${pts === 0 ? " results-no-points" : ""}`}>
+                  {result.points}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

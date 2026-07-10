@@ -112,8 +112,8 @@ function CompareContent({ drivers }: Props) {
   const searchParams = useSearchParams();
 
   // Selected driver IDs from URL parameters
-  const [driverAId, setDriverAId] = useState<string | null>(searchParams.get("a") || null);
-  const [driverBId, setDriverBId] = useState<string | null>(searchParams.get("b") || null);
+  const [driverAId, setDriverAId] = useState<string | null>(() => searchParams.get("a") || null);
+  const [driverBId, setDriverBId] = useState<string | null>(() => searchParams.get("b") || null);
 
   // Autocomplete search inputs state
   const [queryA, setQueryA] = useState("");
@@ -592,101 +592,16 @@ function CompareContent({ drivers }: Props) {
       </div>
 
       {/* Side-by-Side Hero Cards */}
-      <div className="compare-heroes-container">
-        {/* Driver A Card */}
-        {driverA ? (
-          <div
-            className="compare-driver-card"
-            style={{
-              "--team-primary": getTeamColors(driverA.constructorId).primary,
-              "--team-dark": getTeamColors(driverA.constructorId).dark,
-              "--team-accent": getTeamColors(driverA.constructorId).accent
-            } as React.CSSProperties}
-          >
-            <div className="compare-hero-watermark">{driverA.permanentNumber}</div>
-            <div className="compare-hero-stripes"><div className="stripe" /><div className="stripe" /></div>
-            <div className="compare-hero-content">
-              <h2 className="compare-hero-name">
-                <span className="compare-hero-given">{driverA.givenName}</span>
-                <span className="compare-hero-family">{driverA.familyName}</span>
-              </h2>
-              <div className="compare-hero-meta">
-                <span className="compare-hero-meta-item">
-                  <Image width={500} height={500} src={`https://flagcdn.com/16x12/${nationalityToCode[driverA.nationality] || "un"}.png`} alt={driverA.nationality} className="compare-hero-flag" />
-                  {driverA.nationality}
-                </span>
-                <span className="compare-hero-meta-sep">|</span>
-                <span className="compare-hero-meta-item">{driverA.team}</span>
-              </div>
-            </div>
-            <div className="compare-hero-photo">
-              {!photoErrorA && getDriverPhoto(driverA.driverId) ? (
-                <Image width={500} height={500} src={getDriverPhoto(driverA.driverId)} alt={driverA.familyName} className="compare-hero-photo-img" onError={() => setPhotoErrorA(true)} />
-              ) : (
-                <div className="compare-hero-photo-fallback">
-                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
-                  </svg>
-                </div>
-              )}
-            </div>
-          </div>
-        ) : (
-          <button className="compare-driver-card-empty" onClick={() => inputRefA.current?.focus()}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" />
-            </svg>
-            Select Driver A
-          </button>
-        )}
-
-        {/* Driver B Card */}
-        {driverB ? (
-          <div
-            className="compare-driver-card"
-            style={{
-              "--team-primary": getTeamColors(driverB.constructorId).primary,
-              "--team-dark": getTeamColors(driverB.constructorId).dark,
-              "--team-accent": getTeamColors(driverB.constructorId).accent
-            } as React.CSSProperties}
-          >
-            <div className="compare-hero-watermark">{driverB.permanentNumber}</div>
-            <div className="compare-hero-stripes"><div className="stripe" /><div className="stripe" /></div>
-            <div className="compare-hero-content">
-              <h2 className="compare-hero-name">
-                <span className="compare-hero-given">{driverB.givenName}</span>
-                <span className="compare-hero-family">{driverB.familyName}</span>
-              </h2>
-              <div className="compare-hero-meta">
-                <span className="compare-hero-meta-item">
-                  <Image width={500} height={500} src={`https://flagcdn.com/16x12/${nationalityToCode[driverB.nationality] || "un"}.png`} alt={driverB.nationality} className="compare-hero-flag" />
-                  {driverB.nationality}
-                </span>
-                <span className="compare-hero-meta-sep">|</span>
-                <span className="compare-hero-meta-item">{driverB.team}</span>
-              </div>
-            </div>
-            <div className="compare-hero-photo">
-              {!photoErrorB && getDriverPhoto(driverB.driverId) ? (
-                <Image width={500} height={500} src={getDriverPhoto(driverB.driverId)} alt={driverB.familyName} className="compare-hero-photo-img" onError={() => setPhotoErrorB(true)} />
-              ) : (
-                <div className="compare-hero-photo-fallback">
-                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
-                  </svg>
-                </div>
-              )}
-            </div>
-          </div>
-        ) : (
-          <button className="compare-driver-card-empty" onClick={() => inputRefB.current?.focus()}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" />
-            </svg>
-            Select Driver B
-          </button>
-        )}
-      </div>
+      <CompareHeroCards
+        driverA={driverA}
+        driverB={driverB}
+        photoErrorA={photoErrorA}
+        photoErrorB={photoErrorB}
+        setPhotoErrorA={setPhotoErrorA}
+        setPhotoErrorB={setPhotoErrorB}
+        inputRefA={inputRefA}
+        inputRefB={inputRefB}
+      />
 
       {/* Main Comparisons Content */}
       {driverA && driverB ? (
@@ -744,168 +659,13 @@ function CompareContent({ drivers }: Props) {
               <span>Fetching {selectedSeason} season metrics...</span>
             </div>
           ) : seasonStats ? (
-            <>
-              {/* Season metrics cards */}
-              <div className="compare-season-cards">
-                {/* Points Card */}
-                <div className="compare-stat-card">
-                  <span className="compare-stat-label">Season Points</span>
-                  <div className="compare-stat-values-row">
-                    <span
-                      className={`compare-stat-card-val left-val ${parseFloat(seasonStats.ptsA) > parseFloat(seasonStats.ptsB) ? "stat-lead" : ""}`}
-                      style={{ "--left-color": getTeamColors(driverA.constructorId).primary, "--lead-color": getTeamColors(driverA.constructorId).primary } as React.CSSProperties}
-                    >
-                      {seasonStats.ptsA}
-                    </span>
-                    <span className="compare-stat-card-vs">vs</span>
-                    <span
-                      className={`compare-stat-card-val right-val ${parseFloat(seasonStats.ptsB) > parseFloat(seasonStats.ptsA) ? "stat-lead" : ""}`}
-                      style={{ "--right-color": getTeamColors(driverB.constructorId).primary, "--lead-color": getTeamColors(driverB.constructorId).primary } as React.CSSProperties}
-                    >
-                      {seasonStats.ptsB}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Average Finish Card */}
-                <div className="compare-stat-card">
-                  <span className="compare-stat-label">Avg. Finish Position</span>
-                  <div className="compare-stat-values-row">
-                    <span
-                      className={`compare-stat-card-val left-val ${seasonStats.avgA !== "--" && (seasonStats.avgB === "--" || parseFloat(seasonStats.avgA) < parseFloat(seasonStats.avgB)) ? "stat-lead" : ""}`}
-                      style={{ "--left-color": getTeamColors(driverA.constructorId).primary, "--lead-color": getTeamColors(driverA.constructorId).primary } as React.CSSProperties}
-                    >
-                      {seasonStats.avgA}
-                    </span>
-                    <span className="compare-stat-card-vs">vs</span>
-                    <span
-                      className={`compare-stat-card-val right-val ${seasonStats.avgB !== "--" && (seasonStats.avgA === "--" || parseFloat(seasonStats.avgB) < parseFloat(seasonStats.avgA)) ? "stat-lead" : ""}`}
-                      style={{ "--right-color": getTeamColors(driverB.constructorId).primary, "--lead-color": getTeamColors(driverB.constructorId).primary } as React.CSSProperties}
-                    >
-                      {seasonStats.avgB}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Best Finish Card */}
-                <div className="compare-stat-card">
-                  <span className="compare-stat-label">Best Finish</span>
-                  <div className="compare-stat-values-row">
-                    <span
-                      className={`compare-stat-card-val left-val ${seasonStats.bestA !== "--" && (seasonStats.bestB === "--" || parseInt(seasonStats.bestA) < parseInt(seasonStats.bestB)) ? "stat-lead" : ""}`}
-                      style={{ "--left-color": getTeamColors(driverA.constructorId).primary, "--lead-color": getTeamColors(driverA.constructorId).primary } as React.CSSProperties}
-                    >
-                      {seasonStats.bestA}
-                    </span>
-                    <span className="compare-stat-card-vs">vs</span>
-                    <span
-                      className={`compare-stat-card-val right-val ${seasonStats.bestB !== "--" && (seasonStats.bestA === "--" || parseInt(seasonStats.bestB) < parseInt(seasonStats.bestA)) ? "stat-lead" : ""}`}
-                      style={{ "--right-color": getTeamColors(driverB.constructorId).primary, "--lead-color": getTeamColors(driverB.constructorId).primary } as React.CSSProperties}
-                    >
-                      {seasonStats.bestB}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Head-to-Head Finish Card */}
-                <div className="compare-stat-card">
-                  <span className="compare-stat-label">H2H Finish Record</span>
-                  <div className="compare-stat-values-row">
-                    <span
-                      className={`compare-stat-card-val left-val ${seasonStats.h2hWinA > seasonStats.h2hWinB ? "stat-lead" : ""}`}
-                      style={{ "--left-color": getTeamColors(driverA.constructorId).primary, "--lead-color": getTeamColors(driverA.constructorId).primary } as React.CSSProperties}
-                    >
-                      {seasonStats.h2hWinA}
-                    </span>
-                    <span className="compare-stat-card-vs">vs</span>
-                    <span
-                      className={`compare-stat-card-val right-val ${seasonStats.h2hWinB > seasonStats.h2hWinA ? "stat-lead" : ""}`}
-                      style={{ "--right-color": getTeamColors(driverB.constructorId).primary, "--lead-color": getTeamColors(driverB.constructorId).primary } as React.CSSProperties}
-                    >
-                      {seasonStats.h2hWinB}
-                    </span>
-                  </div>
-                  {/* Visual H2H split bar */}
-                  {(() => {
-                    const total = seasonStats.h2hWinA + seasonStats.h2hWinB;
-                    const fillA = total > 0 ? (seasonStats.h2hWinA / total) * 100 : 50;
-                    const fillB = total > 0 ? (seasonStats.h2hWinB / total) * 100 : 50;
-                    return (
-                      <div className="compare-h2h-split-bar">
-                        <div className="compare-h2h-left-fill" style={{ width: `${fillA}%`, "--left-color": getTeamColors(driverA.constructorId).primary } as React.CSSProperties} />
-                        <div className="compare-h2h-right-fill" style={{ width: `${fillB}%`, "--right-color": getTeamColors(driverB.constructorId).primary } as React.CSSProperties} />
-                      </div>
-                    );
-                  })()}
-                </div>
-              </div>
-
-              {/* Side-by-side Results Table */}
-              <div className="compare-section-header">{selectedSeason} Season Race-by-Race Comparison</div>
-
-              <div className="compare-table-wrapper">
-                <table className="compare-results-table">
-                  <thead>
-                    <tr>
-                      <th className="compare-cell-round">Round</th>
-                      <th className="compare-cell-gp">Grand Prix</th>
-                      <th className="compare-cell-driver-a" style={{ color: getTeamColors(driverA.constructorId).primary }}>
-                        {driverA.familyName}
-                      </th>
-                      <th className="compare-cell-vs-divider">VS</th>
-                      <th className="compare-cell-driver-b" style={{ color: getTeamColors(driverB.constructorId).primary }}>
-                        {driverB.familyName}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {comparisonTableRows.length === 0 ? (
-                      <tr>
-                        <td colSpan={5} style={{ textAlign: "center", padding: "32px", color: "var(--text-muted)" }}>
-                          No races found for the {selectedSeason} season.
-                        </td>
-                      </tr>
-                    ) : (
-                      comparisonTableRows.map((row) => (
-                        <tr
-                          key={row.round}
-                          className={`${row.winLeft ? "compare-row-win-left" : ""} ${row.winRight ? "compare-row-win-right" : ""}`}
-                          style={{
-                            "--left-color": getTeamColors(driverA.constructorId).primary,
-                            "--right-color": getTeamColors(driverB.constructorId).primary
-                          } as React.CSSProperties}
-                        >
-                          <td className="compare-cell-round">{row.round.padStart(2, "0")}</td>
-                          <td>
-                            <div className="gp-cell">
-                              <Image width={500} height={500} src={row.flagUrl} alt="Country flag" className="gp-flag" loading="lazy" />
-                              <span className="compare-cell-gp">{row.gpName}</span>
-                            </div>
-                          </td>
-                          <td className="compare-cell-driver-a">
-                            <span
-                              className={`compare-badge ${row.winLeft ? "compare-badge-win-lead" : ""} ${row.posA === "1" ? "pos-win" : row.posA === "2" || row.posA === "3" ? "pos-podium" : row.posA === "R" || row.posA === "D" ? "pos-dnf" : ""}`}
-                              style={{ "--team-color": getTeamColors(driverA.constructorId).primary } as React.CSSProperties}
-                            >
-                              {row.posA}
-                            </span>
-                          </td>
-                          <td className="compare-cell-vs-divider">:</td>
-                          <td className="compare-cell-driver-b">
-                            <span
-                              className={`compare-badge ${row.winRight ? "compare-badge-win-lead" : ""} ${row.posB === "1" ? "pos-win" : row.posB === "2" || row.posB === "3" ? "pos-podium" : row.posB === "R" || row.posB === "D" ? "pos-dnf" : ""}`}
-                              style={{ "--team-color": getTeamColors(driverB.constructorId).primary } as React.CSSProperties}
-                            >
-                              {row.posB}
-                            </span>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </>
+            <CompareSeasonSection
+              seasonStats={seasonStats}
+              selectedSeason={selectedSeason}
+              driverA={driverA}
+              driverB={driverB}
+              comparisonTableRows={comparisonTableRows}
+            />
           ) : (
             <div className="compare-empty-state-notice">
               <h3>Stats Unavailable</h3>
@@ -920,6 +680,184 @@ function CompareContent({ drivers }: Props) {
         </div>
       )}
     </div>
+  );
+}
+
+/* ─── Hero Cards Subcomponent ─── */
+
+function CompareHeroCards({ driverA, driverB, photoErrorA, photoErrorB, setPhotoErrorA, setPhotoErrorB, inputRefA, inputRefB }: {
+  driverA: DriverInfo | null; driverB: DriverInfo | null;
+  photoErrorA: boolean; photoErrorB: boolean;
+  setPhotoErrorA: (v: boolean) => void; setPhotoErrorB: (v: boolean) => void;
+  inputRefA: React.RefObject<HTMLInputElement | null>; inputRefB: React.RefObject<HTMLInputElement | null>;
+}) {
+  return (
+    <div className="compare-heroes-container">
+      {driverA ? (
+        <div className="compare-driver-card" style={{ "--team-primary": getTeamColors(driverA.constructorId).primary, "--team-dark": getTeamColors(driverA.constructorId).dark, "--team-accent": getTeamColors(driverA.constructorId).accent } as React.CSSProperties}>
+          <div className="compare-hero-watermark">{driverA.permanentNumber}</div>
+          <div className="compare-hero-stripes"><div className="stripe" /><div className="stripe" /></div>
+          <div className="compare-hero-content">
+            <h2 className="compare-hero-name">
+              <span className="compare-hero-given">{driverA.givenName}</span>
+              <span className="compare-hero-family">{driverA.familyName}</span>
+            </h2>
+            <div className="compare-hero-meta">
+              <span className="compare-hero-meta-item">
+                <Image width={500} height={500} src={`https://flagcdn.com/16x12/${nationalityToCode[driverA.nationality] || "un"}.png`} alt={driverA.nationality} className="compare-hero-flag" />
+                {driverA.nationality}
+              </span>
+              <span className="compare-hero-meta-sep">|</span>
+              <span className="compare-hero-meta-item">{driverA.team}</span>
+            </div>
+          </div>
+          <div className="compare-hero-photo">
+            {!photoErrorA && getDriverPhoto(driverA.driverId) ? (
+              <Image width={500} height={500} src={getDriverPhoto(driverA.driverId)} alt={driverA.familyName} className="compare-hero-photo-img" onError={() => setPhotoErrorA(true)} />
+            ) : (
+              <div className="compare-hero-photo-fallback">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <button type="button" className="compare-driver-card-empty" onClick={() => inputRefA.current?.focus()}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" /></svg>
+          Select Driver A
+        </button>
+      )}
+
+      {driverB ? (
+        <div className="compare-driver-card" style={{ "--team-primary": getTeamColors(driverB.constructorId).primary, "--team-dark": getTeamColors(driverB.constructorId).dark, "--team-accent": getTeamColors(driverB.constructorId).accent } as React.CSSProperties}>
+          <div className="compare-hero-watermark">{driverB.permanentNumber}</div>
+          <div className="compare-hero-stripes"><div className="stripe" /><div className="stripe" /></div>
+          <div className="compare-hero-content">
+            <h2 className="compare-hero-name">
+              <span className="compare-hero-given">{driverB.givenName}</span>
+              <span className="compare-hero-family">{driverB.familyName}</span>
+            </h2>
+            <div className="compare-hero-meta">
+              <span className="compare-hero-meta-item">
+                <Image width={500} height={500} src={`https://flagcdn.com/16x12/${nationalityToCode[driverB.nationality] || "un"}.png`} alt={driverB.nationality} className="compare-hero-flag" />
+                {driverB.nationality}
+              </span>
+              <span className="compare-hero-meta-sep">|</span>
+              <span className="compare-hero-meta-item">{driverB.team}</span>
+            </div>
+          </div>
+          <div className="compare-hero-photo">
+            {!photoErrorB && getDriverPhoto(driverB.driverId) ? (
+              <Image width={500} height={500} src={getDriverPhoto(driverB.driverId)} alt={driverB.familyName} className="compare-hero-photo-img" onError={() => setPhotoErrorB(true)} />
+            ) : (
+              <div className="compare-hero-photo-fallback">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <button type="button" className="compare-driver-card-empty" onClick={() => inputRefB.current?.focus()}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" /></svg>
+          Select Driver B
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ─── Season Stats + Results Table Subcomponent ─── */
+
+function CompareSeasonSection({ seasonStats, selectedSeason, driverA, driverB, comparisonTableRows }: {
+  seasonStats: { ptsA: string; ptsB: string; avgA: string; avgB: string; bestA: string; bestB: string; h2hWinA: number; h2hWinB: number; };
+  selectedSeason: number; driverA: DriverInfo; driverB: DriverInfo;
+  comparisonTableRows: { round: string; gpName: string; flagUrl: string; posA: string; posB: string; winLeft: boolean; winRight: boolean; }[];
+}) {
+  const colorsA = getTeamColors(driverA.constructorId);
+  const colorsB = getTeamColors(driverB.constructorId);
+
+  return (
+    <>
+      <div className="compare-season-cards">
+        <div className="compare-stat-card">
+          <span className="compare-stat-label">Season Points</span>
+          <div className="compare-stat-values-row">
+            <span className={`compare-stat-card-val left-val ${parseFloat(seasonStats.ptsA) > parseFloat(seasonStats.ptsB) ? "stat-lead" : ""}`} style={{ "--left-color": colorsA.primary, "--lead-color": colorsA.primary } as React.CSSProperties}>{seasonStats.ptsA}</span>
+            <span className="compare-stat-card-vs">vs</span>
+            <span className={`compare-stat-card-val right-val ${parseFloat(seasonStats.ptsB) > parseFloat(seasonStats.ptsA) ? "stat-lead" : ""}`} style={{ "--right-color": colorsB.primary, "--lead-color": colorsB.primary } as React.CSSProperties}>{seasonStats.ptsB}</span>
+          </div>
+        </div>
+
+        <div className="compare-stat-card">
+          <span className="compare-stat-label">Avg. Finish Position</span>
+          <div className="compare-stat-values-row">
+            <span className={`compare-stat-card-val left-val ${seasonStats.avgA !== "--" && (seasonStats.avgB === "--" || parseFloat(seasonStats.avgA) < parseFloat(seasonStats.avgB)) ? "stat-lead" : ""}`} style={{ "--left-color": colorsA.primary, "--lead-color": colorsA.primary } as React.CSSProperties}>{seasonStats.avgA}</span>
+            <span className="compare-stat-card-vs">vs</span>
+            <span className={`compare-stat-card-val right-val ${seasonStats.avgB !== "--" && (seasonStats.avgA === "--" || parseFloat(seasonStats.avgB) < parseFloat(seasonStats.avgA)) ? "stat-lead" : ""}`} style={{ "--right-color": colorsB.primary, "--lead-color": colorsB.primary } as React.CSSProperties}>{seasonStats.avgB}</span>
+          </div>
+        </div>
+
+        <div className="compare-stat-card">
+          <span className="compare-stat-label">Best Finish</span>
+          <div className="compare-stat-values-row">
+            <span className={`compare-stat-card-val left-val ${seasonStats.bestA !== "--" && (seasonStats.bestB === "--" || parseInt(seasonStats.bestA) < parseInt(seasonStats.bestB)) ? "stat-lead" : ""}`} style={{ "--left-color": colorsA.primary, "--lead-color": colorsA.primary } as React.CSSProperties}>{seasonStats.bestA}</span>
+            <span className="compare-stat-card-vs">vs</span>
+            <span className={`compare-stat-card-val right-val ${seasonStats.bestB !== "--" && (seasonStats.bestA === "--" || parseInt(seasonStats.bestB) < parseInt(seasonStats.bestA)) ? "stat-lead" : ""}`} style={{ "--right-color": colorsB.primary, "--lead-color": colorsB.primary } as React.CSSProperties}>{seasonStats.bestB}</span>
+          </div>
+        </div>
+
+        <div className="compare-stat-card">
+          <span className="compare-stat-label">H2H Finish Record</span>
+          <div className="compare-stat-values-row">
+            <span className={`compare-stat-card-val left-val ${seasonStats.h2hWinA > seasonStats.h2hWinB ? "stat-lead" : ""}`} style={{ "--left-color": colorsA.primary, "--lead-color": colorsA.primary } as React.CSSProperties}>{seasonStats.h2hWinA}</span>
+            <span className="compare-stat-card-vs">vs</span>
+            <span className={`compare-stat-card-val right-val ${seasonStats.h2hWinB > seasonStats.h2hWinA ? "stat-lead" : ""}`} style={{ "--right-color": colorsB.primary, "--lead-color": colorsB.primary } as React.CSSProperties}>{seasonStats.h2hWinB}</span>
+          </div>
+          {(() => {
+            const total = seasonStats.h2hWinA + seasonStats.h2hWinB;
+            const fillA = total > 0 ? (seasonStats.h2hWinA / total) * 100 : 50;
+            const fillB = total > 0 ? (seasonStats.h2hWinB / total) * 100 : 50;
+            return (
+              <div className="compare-h2h-split-bar">
+                <div className="compare-h2h-left-fill" style={{ width: `${fillA}%`, "--left-color": colorsA.primary } as React.CSSProperties} />
+                <div className="compare-h2h-right-fill" style={{ width: `${fillB}%`, "--right-color": colorsB.primary } as React.CSSProperties} />
+              </div>
+            );
+          })()}
+        </div>
+      </div>
+
+      <div className="compare-section-header">{selectedSeason} Season Race-by-Race Comparison</div>
+
+      <div className="compare-table-wrapper">
+        <table className="compare-results-table">
+          <thead>
+            <tr>
+              <th className="compare-cell-round">Round</th>
+              <th className="compare-cell-gp">Grand Prix</th>
+              <th className="compare-cell-driver-a" style={{ color: colorsA.primary }}>{driverA.familyName}</th>
+              <th className="compare-cell-vs-divider">VS</th>
+              <th className="compare-cell-driver-b" style={{ color: colorsB.primary }}>{driverB.familyName}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {comparisonTableRows.length === 0 ? (
+              <tr><td colSpan={5} style={{ textAlign: "center", padding: "32px", color: "var(--text-muted)" }}>No races found for the {selectedSeason} season.</td></tr>
+            ) : (
+              comparisonTableRows.map((row) => (
+                <tr key={row.round} className={`${row.winLeft ? "compare-row-win-left" : ""} ${row.winRight ? "compare-row-win-right" : ""}`} style={{ "--left-color": colorsA.primary, "--right-color": colorsB.primary } as React.CSSProperties}>
+                  <td className="compare-cell-round">{row.round.padStart(2, "0")}</td>
+                  <td><div className="gp-cell"><Image width={500} height={500} src={row.flagUrl} alt="Country flag" className="gp-flag" loading="lazy" /><span className="compare-cell-gp">{row.gpName}</span></div></td>
+                  <td className="compare-cell-driver-a"><span className={`compare-badge ${row.winLeft ? "compare-badge-win-lead" : ""} ${row.posA === "1" ? "pos-win" : row.posA === "2" || row.posA === "3" ? "pos-podium" : row.posA === "R" || row.posA === "D" ? "pos-dnf" : ""}`} style={{ "--team-color": colorsA.primary } as React.CSSProperties}>{row.posA}</span></td>
+                  <td className="compare-cell-vs-divider">:</td>
+                  <td className="compare-cell-driver-b"><span className={`compare-badge ${row.winRight ? "compare-badge-win-lead" : ""} ${row.posB === "1" ? "pos-win" : row.posB === "2" || row.posB === "3" ? "pos-podium" : row.posB === "R" || row.posB === "D" ? "pos-dnf" : ""}`} style={{ "--team-color": colorsB.primary } as React.CSSProperties}>{row.posB}</span></td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 

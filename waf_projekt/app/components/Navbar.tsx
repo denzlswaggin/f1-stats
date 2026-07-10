@@ -51,6 +51,7 @@ export default function Navbar({ user }: { user?: { name?: string | null; email?
     <nav className="navbar" id="main-navbar">
       <div className="navbar-dropdown-wrapper" ref={dropdownRef}>
         <button
+          type="button"
           className={`navbar-logo${open ? " open" : ""}`}
           id="navbar-logo"
           onClick={() => setOpen(!open)}
@@ -116,6 +117,7 @@ export default function Navbar({ user }: { user?: { name?: string | null; email?
             <CoinBalance />
             <span className="navbar-brand-text" aria-hidden="true">{user.name || user.email || "F1 Stats Hub"}</span>
             <button
+              type="button"
               className="navbar-auth-btn"
               onClick={() => logoutUser()}
             >

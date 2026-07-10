@@ -119,6 +119,7 @@ export default function CollectionPage() {
 
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center backdrop-blur-[2px] z-10">
                 <button
+                  type="button"
                   className="sell-btn"
                   onClick={() => handleSell(card.driverId)}
                   disabled={sellingId === card.driverId}

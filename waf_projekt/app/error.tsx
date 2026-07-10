@@ -18,6 +18,7 @@ export default function DashboardError({
         {error.message}
       </p>
       <button
+        type="button"
         className="error-retry-btn"
         onClick={reset}
         id="error-retry-btn"

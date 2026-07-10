@@ -34,7 +34,7 @@ function padZero(num: number): string {
 
 export default function Countdown({ targetDate }: CountdownProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(
-    calculateTimeLeft(targetDate)
+    () => calculateTimeLeft(targetDate)
   );
   const [mounted, setMounted] = useState(false);
 

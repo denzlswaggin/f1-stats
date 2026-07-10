@@ -376,75 +376,12 @@ export default function DriverProfileClient({ drivers, initialDriverId }: Props)
 
       {driver && (
         <>
-          {/* Driver hero card — F1 store style */}
-          {(() => {
-            const colors = getTeamColors(driver.constructorId);
-            const flagCode = nationalityToCode[driver.nationality] || "un";
-            return (
-              <div
-                className="driver-hero"
-                id="driver-hero"
-                style={{
-                  "--team-primary": colors.primary,
-                  "--team-dark": colors.dark,
-                  "--team-accent": colors.accent,
-                } as React.CSSProperties}
-              >
-                {/* Large background number watermark */}
-                <div className="driver-hero-watermark" aria-hidden="true">
-                  {driver.permanentNumber}
-                </div>
-
-                {/* Decorative stripes */}
-                <div className="driver-hero-stripes" aria-hidden="true">
-                  <div className="stripe" />
-                  <div className="stripe" />
-                </div>
-
-                {/* Left: driver info */}
-                <div className="driver-hero-content">
-                  <h2 className="driver-hero-name">
-                    <span className="driver-hero-given">{driver.givenName}</span>
-                    <span className="driver-hero-family">{driver.familyName}</span>
-                  </h2>
-
-                  <div className="driver-hero-meta">
-                    <span className="driver-hero-meta-item">
-                      <Image width={500} height={500}
-                        src={`https://flagcdn.com/20x15/${flagCode}.png`}
-                        alt={driver.nationality}
-                        className="driver-hero-flag"
-                      />
-                      {driver.nationality}
-                    </span>
-                    <span className="driver-hero-meta-sep">|</span>
-                    <span className="driver-hero-meta-item">{driver.team}</span>
-                    <span className="driver-hero-meta-sep">|</span>
-                    <span className="driver-hero-meta-item">{driver.permanentNumber}</span>
-                  </div>
-                </div>
-
-                {/* Right: driver photo */}
-                <div className="driver-hero-photo">
-                  {!photoError && getDriverPhoto(driver.driverId) ? (
-                    <Image width={500} height={500}
-                      src={getDriverPhoto(driver.driverId)}
-                      alt={`${driver.givenName} ${driver.familyName}`}
-                      className="driver-hero-photo-img"
-                      onError={() => setPhotoError(true)}
-                    />
-                  ) : (
-                    <div className="driver-hero-photo-fallback">
-                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                      </svg>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })()}
+          {/* Driver hero card */}
+          <DriverHeroCard
+            driver={driver}
+            photoError={photoError}
+            setPhotoError={setPhotoError}
+          />
 
           {/* Career stats grid */}
           <div className="driver-stats-grid">
@@ -512,70 +449,11 @@ export default function DriverProfileClient({ drivers, initialDriverId }: Props)
             </div>
           </div>
 
-          <div className="results-table-wrapper">
-            <table className="results-table-flat">
-              <thead>
-                <tr>
-                  <th>Round</th>
-                  <th>Grand Prix</th>
-                  <th>Position</th>
-                  <th>Pts</th>
-                </tr>
-              </thead>
-              <tbody>
-                {isLoading ? (
-                  <tr>
-                    <td colSpan={4} style={{ textAlign: "center", padding: "32px", color: "var(--text-muted)" }}>
-                      <div className="results-loading">
-                        <div className="results-loading-spinner" />
-                        Loading {selectedSeason} results...
-                      </div>
-                    </td>
-                  </tr>
-                ) : results.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} style={{ textAlign: "center", padding: "32px", color: "var(--text-muted)" }}>
-                      No results found for {selectedSeason} season.
-                    </td>
-                  </tr>
-                ) : (
-                  results.map((race, index) => (
-                    <tr
-                      key={index}
-                      className="driver-result-row-clickable"
-                      onClick={() => { }}
-                    >
-                      <td>{race.round}</td>
-                      <td>
-                        <Link
-                          href={`/results/${race.season}/${parseInt(race.round)}`}
-                          className="driver-gp-link"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <div className="gp-cell">
-                            <Image width={500} height={500}
-                              src={race.flagUrl}
-                              alt="Country flag"
-                              className="gp-flag"
-                              loading="lazy"
-                            />
-                            <span>{race.gp}</span>
-                          </div>
-                        </Link>
-                      </td>
-                      <td>
-                        <span className={`pos-badge${race.pos === "1" ? " pos-win" : race.pos === "2" || race.pos === "3" ? " pos-podium" : race.pos === "R" ? " pos-dnf" : ""}`}>
-                          {race.pos}
-                        </span>
-                      </td>
-                      <td>{race.pts}</td>
-                    </tr>
-                  ))
-                )}
-
-              </tbody>
-            </table>
-          </div>
+          <DriverResultsTable
+            results={results}
+            isLoading={isLoading}
+            selectedSeason={selectedSeason}
+          />
 
           <Link
             href={`/compare?a=${driver.driverId}`}
@@ -586,6 +464,144 @@ export default function DriverProfileClient({ drivers, initialDriverId }: Props)
 
         </>
       )}
+    </div>
+  );
+}
+
+/* ─── Hero Card Subcomponent ─── */
+
+function DriverHeroCard({ driver, photoError, setPhotoError }: {
+  driver: DriverInfo; photoError: boolean; setPhotoError: (v: boolean) => void;
+}) {
+  const colors = getTeamColors(driver.constructorId);
+  const flagCode = nationalityToCode[driver.nationality] || "un";
+
+  return (
+    <div
+      className="driver-hero"
+      id="driver-hero"
+      style={{
+        "--team-primary": colors.primary,
+        "--team-dark": colors.dark,
+        "--team-accent": colors.accent,
+      } as React.CSSProperties}
+    >
+      <div className="driver-hero-watermark" aria-hidden="true">
+        {driver.permanentNumber}
+      </div>
+      <div className="driver-hero-stripes" aria-hidden="true">
+        <div className="stripe" />
+        <div className="stripe" />
+      </div>
+      <div className="driver-hero-content">
+        <h2 className="driver-hero-name">
+          <span className="driver-hero-given">{driver.givenName}</span>
+          <span className="driver-hero-family">{driver.familyName}</span>
+        </h2>
+        <div className="driver-hero-meta">
+          <span className="driver-hero-meta-item">
+            <Image width={500} height={500}
+              src={`https://flagcdn.com/20x15/${flagCode}.png`}
+              alt={driver.nationality}
+              className="driver-hero-flag"
+            />
+            {driver.nationality}
+          </span>
+          <span className="driver-hero-meta-sep">|</span>
+          <span className="driver-hero-meta-item">{driver.team}</span>
+          <span className="driver-hero-meta-sep">|</span>
+          <span className="driver-hero-meta-item">{driver.permanentNumber}</span>
+        </div>
+      </div>
+      <div className="driver-hero-photo">
+        {!photoError && getDriverPhoto(driver.driverId) ? (
+          <Image width={500} height={500}
+            src={getDriverPhoto(driver.driverId)}
+            alt={`${driver.givenName} ${driver.familyName}`}
+            className="driver-hero-photo-img"
+            onError={() => setPhotoError(true)}
+          />
+        ) : (
+          <div className="driver-hero-photo-fallback">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Results Table Subcomponent ─── */
+
+function DriverResultsTable({ results, isLoading, selectedSeason }: {
+  results: RaceResult[]; isLoading: boolean; selectedSeason: number;
+}) {
+  return (
+    <div className="results-table-wrapper">
+      <table className="results-table-flat">
+        <thead>
+          <tr>
+            <th>Round</th>
+            <th>Grand Prix</th>
+            <th>Position</th>
+            <th>Pts</th>
+          </tr>
+        </thead>
+        <tbody>
+          {isLoading ? (
+            <tr>
+              <td colSpan={4} style={{ textAlign: "center", padding: "32px", color: "var(--text-muted)" }}>
+                <div className="results-loading">
+                  <div className="results-loading-spinner" />
+                  Loading {selectedSeason} results...
+                </div>
+              </td>
+            </tr>
+          ) : results.length === 0 ? (
+            <tr>
+              <td colSpan={4} style={{ textAlign: "center", padding: "32px", color: "var(--text-muted)" }}>
+                No results found for {selectedSeason} season.
+              </td>
+            </tr>
+          ) : (
+            results.map((race, index) => (
+              <tr
+                key={index}
+                className="driver-result-row-clickable"
+                onClick={() => { }}
+              >
+                <td>{race.round}</td>
+                <td>
+                  <Link
+                    href={`/results/${race.season}/${parseInt(race.round)}`}
+                    className="driver-gp-link"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="gp-cell">
+                      <Image width={500} height={500}
+                        src={race.flagUrl}
+                        alt="Country flag"
+                        className="gp-flag"
+                        loading="lazy"
+                      />
+                      <span>{race.gp}</span>
+                    </div>
+                  </Link>
+                </td>
+                <td>
+                  <span className={`pos-badge${race.pos === "1" ? " pos-win" : race.pos === "2" || race.pos === "3" ? " pos-podium" : race.pos === "R" ? " pos-dnf" : ""}`}>
+                    {race.pos}
+                  </span>
+                </td>
+                <td>{race.pts}</td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }
